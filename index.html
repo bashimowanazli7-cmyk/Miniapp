@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Vault AI</title>
+    <title>Crypto Vault</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -13,851 +13,629 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background-color: #0f172a;
+            background-color: #0b191e;
             color: #f8fafc;
-            padding-bottom: 70px;
-        }
-        .tab-content {
-            display: none;
-            padding: 16px;
-        }
-        .tab-content.active {
-            display: block;
-        }
-        .header {
+            min-height: 100vh;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
-            padding: 5px 0;
+            justify-content: center;
+            padding: 20px;
         }
-        .header h2 {
+        .container {
+            width: 100%;
+            max-width: 400px;
+            background-color: #112229;
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid #1a3642;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 15px;
+        }
+        .lang-btn {
+            background: none;
+            border: none;
+            color: #38bdf8;
             font-size: 18px;
-            font-weight: 600;
-            color: #38bdf8;
-        }
-        .log-btn {
-            font-size: 13px;
-            color: #94a3b8;
-            text-decoration: none;
-        }
-        .page-title-area {
-            text-align: center;
-            padding: 10px 0 20px 0;
-        }
-        .page-title-area h2 {
-            font-size: 20px;
-            color: #38bdf8;
-            margin-bottom: 5px;
-        }
-        .page-title-area p {
-            font-size: 13px;
-            color: #94a3b8;
-        }
-        .crypto-list {
-            background-color: #1e293b;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .crypto-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            border-bottom: 1px solid #334155;
             cursor: pointer;
         }
-        .crypto-item:last-child {
-            border-bottom: none;
+        .logo-area {
+            text-align: center;
+            margin-bottom: 25px;
         }
-        .crypto-info {
+        .logo-box {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 14px;
+            margin: 0 auto 10px auto;
             display: flex;
             align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #38bdf8;
+            font-size: 20px;
+            border: 1px solid #334155;
         }
-        .crypto-icon {
-            width: 34px;
-            height: 34px;
-            margin-right: 12px;
+        .logo-area h1 {
+            font-size: 20px;
+            color: #ffffff;
+        }
+        .auth-tabs {
+            display: flex;
+            background-color: #0b191e;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 20px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            text-align: center;
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        .auth-tab.active {
+            background-color: #0d5c36;
+            color: #ffffff;
+        }
+        .input-group {
+            margin-bottom: 14px;
+            position: relative;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            background-color: #0b191e;
+            border: 1px solid #1a3642;
+            border-radius: 10px;
+            color: white;
+            font-size: 13px;
+        }
+        .input-group input:focus {
+            border-color: #0d5c36;
+            outline: none;
+        }
+        .eye-icon {
+            position: absolute;
+            right: 15px;
+            top: 14px;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 16px;
+        }
+        .password-strength {
+            display: flex;
+            gap: 6px;
+            margin-top: 6px;
+            margin-bottom: 10px;
+            padding-left: 2px;
+        }
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background-color: #1a3642;
+            border-radius: 2px;
+            transition: background-color 0.3s ease;
+        }
+        .submit-btn {
+            width: 100%;
+            background-color: #0d5c36;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .submit-btn:hover {
+            background-color: #107544;
+        }
+
+        /* Profil / Ben Ekranı */
+        .profile-container {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            background-color: #112229;
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid #1a3642;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 14px;
-        }
-        .icon-usdt { background-color: #26a17b; color: white; }
-        .icon-bnb { background-color: #f0b90b; color: black; }
-        .icon-eth { background-color: #627eea; color: white; }
-        .icon-pol { background-color: #8247e5; color: white; }
-        .crypto-name { font-size: 15px; font-weight: 600; }
-        .crypto-fullname { font-size: 12px; color: #94a3b8; margin-left: 5px; }
-        .arrow { color: #94a3b8; font-size: 18px; }
-
-        .vip-card {
-            background-color: #1e293b;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
-            position: relative;
+            color: #38bdf8;
+            font-size: 18px;
             border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        .vip-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px 14px;
-            border-bottom-left-radius: 12px;
-            border-top-right-radius: 16px;
+        .profile-info h3 {
+            font-size: 13px;
+            color: #ffffff;
+            word-break: break-all;
         }
-        .vip-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 15px;
-            margin-top: 5px;
-        }
-        .info-item {
-            display: flex;
-            flex-direction: column;
-        }
-        .info-label {
+        .profile-info p {
             font-size: 12px;
             color: #94a3b8;
-            margin-bottom: 3px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
+        .copy-btn {
+            background-color: #1e293b;
+            color: #38bdf8;
+            border: none;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
         }
-        .info-value.green {
-            color: #22c55e;
+        .wallet-card {
+            background: linear-gradient(135deg, #152830, #0d1b22);
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #1a3642;
         }
-        .card-footer {
+        .wallet-row {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid #334155;
-            padding-top: 12px;
+            margin-bottom: 12px;
         }
-        .price {
-            font-size: 16px;
-            font-weight: bold;
-            color: #f8fafc;
-        }
-        .unlock-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: #ffffff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
+        .wallet-item {
             cursor: pointer;
         }
-        .card {
-            background-color: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid #334155;
-        }
-        .card h2 { color: #38bdf8; font-size: 18px; margin-bottom: 10px; }
-        .card p { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
-        .btn {
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: white;
-            font-size: 12px;
-        }
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1e293b;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #334155;
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #94a3b8;
-            background: none;
-            border: none;
+        .wallet-item span {
             font-size: 11px;
-            cursor: pointer;
-            flex: 1;
-        }
-        .nav-item span { font-size: 18px; margin-bottom: 3px; }
-        .nav-item.active { color: #38bdf8; font-weight: bold; }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: #1e293b;
-            margin: 20px;
-            padding: 25px 20px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 380px;
-            text-align: center;
-            border: 1px solid #334155;
-            position: relative;
-        }
-        .close-modal {
             color: #94a3b8;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .modal-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #f8fafc;
-        }
-        .modal-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .address-box {
-            background-color: #0f172a;
-            padding: 12px;
-            border-radius: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            word-break: break-all;
-            margin: 10px 0;
-            border: 1px solid #334155;
-            color: #38bdf8;
-            user-select: all;
-        }
-    </style>
-</head>
-<body>
-    <div id="ev" class="tab-content active">
-        <div class="page-title-area">
-            <h2>Kripto Varlıklar</h2>
-            <p>Yatırım yapmak için para birimini seçin</p>
-        </div>
-        <div class="crypto-list">
-            <div class="crypto-item" onclick="openAddressModal('TRC20-USDT', '0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc')">
-                <div class="crypto-info"><div class="crypto-icon icon-usdt">T</div><span class="crypto-name">USDT</span><span class="crypto-fullname">(TRC20)</span></div>
-                <span class="arrow">›</span>
-            </div>
-            <div class="crypto-item" onclick="openAddressModal('BNB (BEP20)', '0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc')">
-                <div class="crypto-info"><div class="crypto-icon icon-bnb">B</div><span class="crypto-name">BNB</span><span class="crypto-fullname">(BEP20)</span></div>
-                <span class="arrow">›</span>
-            </div>
-            <div class="crypto-item" onclick="openAddressModal('ETH (ERC20)', '0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc')">
-                <div class="crypto-info"><div class="crypto-icon icon-eth">Ξ</div><span class="crypto-name">ETH</span><span class="crypto-fullname">(ERC20)</span></div>
-                <span class="arrow">›</span>
-            </div>
-            <div class="crypto-item" onclick="openAddressModal('POLYGON', '0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc')">
-                <div class="crypto-info"><div class="crypto-icon icon-pol">P</div><span class="crypto-name">POL</span><span class="crypto-fullname">(MATIC)</span></div>
-                <span class="arrow">›</span>
-            </div>
-        </div>
-    </div>
-
-    <div id="gorevler" class="tab-content">
-        <div class="header"><h2>Günlük Görevler</h2></div>
-        <div class="card">
-            <h2>📋 Kâr Vakti</h2>
-            <p>Her gün saat 18:00'de kâr toplama süreci aktifleşir.</p>
-            <button class="btn" onclick="alert('Henüz zamanı gelmedi!')">Kârı Topla</button>
-        </div>
-    </div>
-
-    <div id="takim" class="tab-content">
-        <div class="header"><h2>Takım Bilgileri</h2></div>
-        <div class="card">
-            <h2>👥 Referans Linkiniz</h2>
-            <p>Arkadaşlarınızı davet ederek kazancınızı katlayın.</p>
-            <input type="text" readonly value="https://t.me/MahriBot?start=ref_8934373999">
-        </div>
-    </div>
-
-    <div id="vip" class="tab-content">
-        <div class="header"><h2>VIP Paketleri</h2><a href="#" class="log-btn">Yükseltme Günlüğü</a></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 1</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">1.75 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">5 USDT</span></div></div><div class="card-footer"><span class="price">5,00 USDT</span><button class="unlock-btn" onclick="openVipModal(5)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 2</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">5.25 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">15 USDT</span></div></div><div class="card-footer"><span class="price">15,00 USDT</span><button class="unlock-btn" onclick="openVipModal(15)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 3</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">10.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">30 USDT</span></div></div><div class="card-footer"><span class="price">30,00 USDT</span><button class="unlock-btn" onclick="openVipModal(30)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 4</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">24.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">70 USDT</span></div></div><div class="card-footer"><span class="price">70,00 USDT</span><button class="unlock-btn" onclick="openVipModal(70)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 5</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">52.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">150 USDT</span></div></div><div class="card-footer"><span class="price">150,00 USDT</span><button class="unlock-btn" onclick="openVipModal(150)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 6</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">84.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">240 USDT</span></div></div><div class="card-footer"><span class="price">240,00 USDT</span><button class="unlock-btn" onclick="openVipModal(240)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 7</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">133.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">380 USDT</span></div></div><div class="card-footer"><span class="price">380,00 USDT</span><button class="unlock-btn" onclick="openVipModal(380)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 8</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">245.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">700 USDT</span></div></div><div class="card-footer"><span class="price">700,00 USDT</span><button class="unlock-btn" onclick="openVipModal(700)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 9</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">367.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">1050 USDT</span></div></div><div class="card-footer"><span class="price">1.050,00 USDT</span><button class="unlock-btn" onclick="openVipModal(1050)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 10</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">1080.80 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">3088 USDT</span></div></div><div class="card-footer"><span class="price">3.088,00 USDT</span><button class="unlock-btn" onclick="openVipModal(3088)">Şimdi Kilidi Aç</button></div></div>
-    </div>
-
-    <div id="ben" class="tab-content">
-        <div class="header"><h2>Profil</h2></div>
-        <div class="card">
-            <h2>👤 Kullanıcı Bilgileri</h2>
-            <p>ID: <strong style="color:#38bdf8;">8934373999</strong></p>
-            <p>Ana Bakiye: <strong style="color:#22c55e;">0.00 USDT</strong></p>
-        </div>
-    </div>
-
-    <div id="vipModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModals()">&times;</span>
-            <p id="vipModalText" class="modal-title">Depozito gerekli</p>
-            <button class="modal-btn" onclick="goToDeposit()">Onaylamak</button>
-        </div>
-    </div>
-
-    <div id="addressModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModals()">&times;</span>
-            <h3 style="font-size: 15px; color: #38bdf8; margin-bottom: 5px;" id="addrTitle">Yatırım Adresi</h3>
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Lütfen bu adrese transfer yapın:</p>
-            <div class="address-box">0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc</div>
-            <p style="font-size: 10px; color: #fbbf24; margin-top: 5px;">⚠️ Yatırım sonrası yöneticiye bildirin.</p>
-        </div>
-    </div>
-
-    <nav class="nav-bar">
-        <button class="nav-item active" onclick="tabDegistir('ev', this)"><span>🏠</span>Ev</button>
-        <button class="nav-item" onclick="tabDegistir('gorevler', this)"><span>📋</span>Görevler</button>
-        <button class="nav-item" onclick="tabDegistir('takim', this)"><span>👥</span>Takım</button>
-        <button class="nav-item" onclick="tabDegistir('vip', this)"><span>⭐</span>VIP</button>
-        <button class="nav-item" onclick="tabDegistir('ben', this)"><span>👤</span>Ben</button>
-    </nav>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-        function tabDegistir(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-        }
-        let currentPrice = 5;
-        function openVipModal(price) {
-            currentPrice = price;
-            document.getElementById("vipModalText").innerText = `Mevduat bakiyenizle otomatik olarak kilidi açın. Depozito gerekli $${price},00`;
-            document.getElementById("vipModal").style.display = "flex";
-        }
-        function goToDeposit() {
-            closeModals();
-            document.getElementById("addrTitle").innerText = `Yatırım Tutarı: $${currentPrice},00`;
-            document.getElementById("addressModal").style.display = "flex";
-        }
-        function openAddressModal(netName, address) {
-            document.getElementById("addrTitle").innerText = netName + " Yatırım Adresi";
-            document.getElementById("addressModal").style.display = "flex";
-        }
-        function closeModals() {
-            document.getElementById("vipModal").style.display = "none";
-            document.getElementById("addressModal").style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) { closeModals(); }
-        }
-    </script>
-</body>
-</html>   
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Vault AI</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            padding-bottom: 70px;
-        }
-        .tab-content {
-            display: none;
-            padding: 16px;
-        }
-        .tab-content.active {
             display: block;
         }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 5px 0;
+        .wallet-item strong {
+            font-size: 16px;
+            color: #ffffff;
+            margin-top: 2px;
+            display: block;
         }
-        .header h2 {
-            font-size: 18px;
-            font-weight: 600;
-            color: #38bdf8;
-        }
-        .log-btn {
-            font-size: 13px;
-            color: #94a3b8;
-            text-decoration: none;
-        }
-        .page-title-area {
-            text-align: center;
-            padding: 10px 0 20px 0;
-        }
-        .page-title-area h2 {
-            font-size: 20px;
-            color: #38bdf8;
-            margin-bottom: 5px;
-        }
-        .page-title-area p {
-            font-size: 13px;
-            color: #94a3b8;
-        }
-        .crypto-list {
-            background-color: #1e293b;
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .crypto-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px;
-            border-bottom: 1px solid #334155;
-            cursor: pointer;
-        }
-        .crypto-item:last-child {
-            border-bottom: none;
-        }
-        .crypto-info {
-            display: flex;
-            align-items: center;
-        }
-        .crypto-icon {
-            width: 34px;
-            height: 34px;
-            margin-right: 12px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .icon-usdt { background-color: #26a17b; color: white; }
-        .icon-bnb { background-color: #f0b90b; color: black; }
-        .icon-eth { background-color: #627eea; color: white; }
-        .icon-pol { background-color: #8247e5; color: white; }
-        .crypto-name { font-size: 15px; font-weight: 600; }
-        .crypto-fullname { font-size: 12px; color: #94a3b8; margin-left: 5px; }
-        .arrow { color: #94a3b8; font-size: 18px; }
-
-        .vip-card {
-            background-color: #1e293b;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
-            position: relative;
-            border: 1px solid #334155;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-        .vip-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px 14px;
-            border-bottom-left-radius: 12px;
-            border-top-right-radius: 16px;
-        }
-        .vip-content {
+        .stats-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
             margin-bottom: 15px;
-            margin-top: 5px;
         }
-        .info-item {
+        .stat-box {
+            background-color: #0b191e;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #1a3642;
+        }
+        .stat-box span {
+            font-size: 11px;
+            color: #94a3b8;
+            display: block;
+            margin-top: 4px;
+        }
+        .stat-box strong {
+            font-size: 15px;
+            color: #ffffff;
+        }
+        .menu-list {
             display: flex;
             flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
         }
-        .info-label {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-bottom: 3px;
-        }
-        .info-value {
-            font-size: 15px;
-            font-weight: 600;
-        }
-        .info-value.green {
-            color: #22c55e;
-        }
-        .card-footer {
+        .menu-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #334155;
-            padding-top: 12px;
-        }
-        .price {
-            font-size: 16px;
-            font-weight: bold;
-            color: #f8fafc;
-        }
-        .unlock-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: #ffffff;
-            border: none;
-            padding: 8px 18px;
-            border-radius: 20px;
+            background-color: #0b191e;
+            padding: 12px 15px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: bold;
+            color: #f8fafc;
             cursor: pointer;
+            border: 1px solid #1a3642;
         }
-        .card {
-            background-color: #1e293b;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 16px;
-            border: 1px solid #334155;
+        .menu-item:hover {
+            border-color: #38bdf8;
         }
-        .card h2 { color: #38bdf8; font-size: 18px; margin-bottom: 10px; }
-        .card p { font-size: 13px; color: #cbd5e1; line-height: 1.5; }
-        .btn {
-            background: linear-gradient(135deg, #38bdf8, #0284c7);
+        .logout-btn {
+            width: 100%;
+            background-color: #0d5c36;
             color: white;
             border: none;
             padding: 12px;
             border-radius: 12px;
-            font-weight: bold;
-            width: 100%;
-            cursor: pointer;
             font-size: 14px;
-            margin-top: 12px;
-        }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            border-radius: 10px;
-            color: white;
-            font-size: 12px;
-        }
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #1e293b;
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #334155;
-            z-index: 1000;
-        }
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: #94a3b8;
-            background: none;
-            border: none;
-            font-size: 11px;
+            font-weight: bold;
             cursor: pointer;
-            flex: 1;
         }
-        .nav-item span { font-size: 18px; margin-bottom: 3px; }
-        .nav-item.active { color: #38bdf8; font-weight: bold; }
+
+        /* Modallar */
         .modal {
             display: none;
             position: fixed;
-            z-index: 2000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.85);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
             justify-content: center;
             align-items: center;
+            z-index: 1000;
         }
         .modal-content {
-            background-color: #1e293b;
-            margin: 20px;
-            padding: 25px 20px;
-            border-radius: 16px;
+            background-color: #112229;
             width: 90%;
-            max-width: 380px;
-            text-align: center;
-            border: 1px solid #334155;
-            position: relative;
+            max-width: 350px;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #1a3642;
         }
-        .close-modal {
-            color: #94a3b8;
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .modal-title {
-            font-size: 15px;
-            font-weight: 600;
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 15px;
-            color: #f8fafc;
-        }
-        .modal-btn {
-            background: linear-gradient(135deg, #ef4444, #b91c1c);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
+            color: #38bdf8;
             font-size: 15px;
             font-weight: bold;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 10px;
         }
-        .address-box {
-            background-color: #0f172a;
-            padding: 12px;
+        .modal-body p {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            background-color: #0b191e;
+            border: 1px solid #1a3642;
             border-radius: 8px;
-            font-family: monospace;
-            font-size: 11px;
-            word-break: break-all;
-            margin: 10px 0;
-            border: 1px solid #334155;
-            color: #38bdf8;
-            user-select: all;
+            color: white;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+        .modal-btn {
+            width: 100%;
+            background-color: #0d5c36;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <div id="ev" class="tab-content active">
-        <div class="page-title-area">
-            <h2>Kripto Varlıklar</h2>
-            <p>Yatırım yapmak için para birimini seçin</p>
+
+    <div class="container" id="authContainer">
+        <div class="top-bar">
+            <button class="lang-btn" onclick="openModal('langModal')">🌐</button>
         </div>
-        <div class="crypto-list">
-            <div class="crypto-item" onclick="openAddressModal('TRC20-USDT')">
-                <div class="crypto-info"><div class="crypto-icon icon-usdt">T</div><span class="crypto-name">USDT</span><span class="crypto-fullname">(TRC20)</span></div>
-                <span class="arrow">›</span>
+
+        <div class="logo-area">
+            <div class="logo-box">CV</div>
+            <h1 id="appTitle">Crypto Vault</h1>
+        </div>
+
+        <form onsubmit="handleAuth(event)">
+            <div class="auth-tabs">
+                <button type="button" class="auth-tab active" id="tabEmailBtn" onclick="switchTab('email')">E-posta</button>
+                <button type="button" class="auth-tab" id="tabMobileBtn" onclick="switchTab('mobile')">Mobil</button>
             </div>
-            <div class="crypto-item" onclick="openAddressModal('BNB (BEP20)')">
-                <div class="crypto-info"><div class="crypto-icon icon-bnb">B</div><span class="crypto-name">BNB</span><span class="crypto-fullname">(BEP20)</span></div>
-                <span class="arrow">›</span>
+
+            <div id="emailForm" class="input-group">
+                <input type="email" id="emailInput" placeholder="E-posta adresinizi girin" required>
             </div>
-            <div class="crypto-item" onclick="openAddressModal('ETH (ERC20)')">
-                <div class="crypto-info"><div class="crypto-icon icon-eth">Ξ</div><span class="crypto-name">ETH</span><span class="crypto-fullname">(ERC20)</span></div>
-                <span class="arrow">›</span>
+            <div id="mobileForm" class="input-group" style="display: none;">
+                <input type="tel" id="mobileInput" placeholder="Cep telefonu numarası">
             </div>
-            <div class="crypto-item" onclick="openAddressModal('POLYGON')">
-                <div class="crypto-info"><div class="crypto-icon icon-pol">P</div><span class="crypto-name">POL</span><span class="crypto-fullname">(MATIC)</span></div>
-                <span class="arrow">›</span>
+
+            <div class="input-group">
+                <input type="password" id="loginPass" placeholder="Giriş şifresi" required oninput="checkPasswordStrength(this.value, 'pass1Bars')">
+                <span class="eye-icon" onclick="togglePassword('loginPass', this)">👁️</span>
+            </div>
+            <div class="password-strength" id="pass1Bars">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="loginPassConfirm" placeholder="Giriş şifresi (Tekrar)" required oninput="checkPasswordStrength(this.value, 'pass2Bars')">
+                <span class="eye-icon" onclick="togglePassword('loginPassConfirm', this)">👁️</span>
+            </div>
+            <div class="password-strength" id="pass2Bars">
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+                <div class="strength-bar"></div>
+            </div>
+
+            <div class="input-group">
+                <input type="password" id="secPass" placeholder="Güvenlik şifresi" required>
+                <span class="eye-icon" onclick="togglePassword('secPass', this)">👁️</span>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="inviteCode" readonly style="background-color: #071115; color: #38bdf8; font-weight: bold;">
+            </div>
+
+            <button type="submit" class="submit-btn">Kayıt Ol / Giriş Yap</button>
+        </form>
+    </div>
+
+    <div class="profile-container" id="profileContainer">
+        <div class="profile-header">
+            <div class="profile-avatar" id="userAvatarText">CV</div>
+            <div class="profile-info">
+                <h3 id="profileEmail">kullanici@gmail.com</h3>
+                <p>Davet Kodu: <span id="profileInviteCode" style="color: #38bdf8;"></span> <button class="copy-btn" onclick="copyInviteCode()">Kopyala</button></p>
             </div>
         </div>
-    </div>
 
-    <div id="gorevler" class="tab-content">
-        <div class="header"><h2>Günlük Görevler</h2></div>
-        <div class="card">
-            <h2>📋 Kâr Vakti</h2>
-            <p>Her gün saat 18:00'de kâr toplama süreci aktifleşir.</p>
-            <button class="btn" onclick="alert('Henüz zamanı gelmedi!')">Kârı Topla</button>
+        <div class="wallet-card">
+            <div class="wallet-row">
+                <div class="wallet-item" onclick="checkWithdrawTime()">
+                    <span>Elektronik cüzdan (USDT)</span>
+                    <strong>0.00 (Çekim)</strong>
+                </div>
+                <div class="wallet-item" onclick="openActionModal('Esnek Cüzdan (USDT)', 'Esnek kazanç ve bakiye detayları.')">
+                    <span>Esnek cüzdan (USDT)</span>
+                    <strong>0.00</strong>
+                </div>
+            </div>
+            <div class="wallet-item" onclick="openActionModal('Freeze İşlemleri', 'Kilitli varlıkların yönetimi.')">
+                <span>Freeze'i aç (USDT)</span>
+                <strong>0</strong>
+            </div>
         </div>
-    </div>
 
-    <div id="takim" class="tab-content">
-        <div class="header"><h2>Takım Bilgileri</h2></div>
-        <div class="card">
-            <h2>👥 Referans Linkiniz</h2>
-            <p>Arkadaşlarınızı davet ederek kazancınızı katlayın.</p>
-            <input type="text" id="refLink" readonly value="https://t.me/MahriBot?start=ref_">
+        <div class="stats-grid">
+            <div class="stat-box">
+                <strong>0.00</strong>
+                <span>Toplam gelir (USDT)</span>
+            </div>
+            <div class="stat-box">
+                <strong>0</strong>
+                <span>Toplam komisyon geliri</span>
+            </div>
+            <div class="stat-box">
+                <strong>0</strong>
+                <span>Kümülatif şarj (USDT)</span>
+            </div>
+            <div class="stat-box">
+                <strong>0.00</strong>
+                <span>Kümülatif para çekme (USDT)</span>
+            </div>
         </div>
-    </div>
 
-    <div id="vip" class="tab-content">
-        <div class="header"><h2>VIP Paketleri</h2><a href="#" class="log-btn">Yükseltme Günlüğü</a></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 1</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">1.75 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">5 USDT</span></div></div><div class="card-footer"><span class="price">5,00 USDT</span><button class="unlock-btn" onclick="openVipModal(5)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 2</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">5.25 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">15 USDT</span></div></div><div class="card-footer"><span class="price">15,00 USDT</span><button class="unlock-btn" onclick="openVipModal(15)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 3</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">10.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">30 USDT</span></div></div><div class="card-footer"><span class="price">30,00 USDT</span><button class="unlock-btn" onclick="openVipModal(30)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 4</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">24.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">70 USDT</span></div></div><div class="card-footer"><span class="price">70,00 USDT</span><button class="unlock-btn" onclick="openVipModal(70)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 5</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">52.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">150 USDT</span></div></div><div class="card-footer"><span class="price">150,00 USDT</span><button class="unlock-btn" onclick="openVipModal(150)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 6</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">84.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">240 USDT</span></div></div><div class="card-footer"><span class="price">240,00 USDT</span><button class="unlock-btn" onclick="openVipModal(240)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 7</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">133.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">380 USDT</span></div></div><div class="card-footer"><span class="price">380,00 USDT</span><button class="unlock-btn" onclick="openVipModal(380)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 8</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">245.00 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">700 USDT</span></div></div><div class="card-footer"><span class="price">700,00 USDT</span><button class="unlock-btn" onclick="openVipModal(700)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 9</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">367.50 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">1050 USDT</span></div></div><div class="card-footer"><span class="price">1.050,00 USDT</span><button class="unlock-btn" onclick="openVipModal(1050)">Şimdi Kilidi Aç</button></div></div>
-
-        <div class="vip-card"><div class="vip-badge">VIP 10</div><div class="vip-content"><div class="info-item"><span class="info-label">Günlük Görevler</span><span class="info-value">1</span></div><div class="info-item" style="text-align: right;"><span class="info-label">Günlük Kar</span><span class="info-value green">1080.80 USDT/gün</span></div><div class="info-item"><span class="info-label">Seviye Ücreti</span><span class="info-value">3088 USDT</span></div></div><div class="card-footer"><span class="price">3.088,00 USDT</span><button class="unlock-btn" onclick="openVipModal(3088)">Şimdi Kilidi Aç</button></div></div>
-    </div>
-
-    <div id="ben" class="tab-content">
-        <div class="header"><h2>Profil</h2></div>
-        <div class="card">
-            <h2>👤 Kullanıcı Bilgileri</h2>
-            <p>ID: <strong id="userId" style="color:#38bdf8;">Yükleniyor...</strong></p>
-            <p>Ana Bakiye: <strong style="color:#22c55e;">0.00 USDT</strong></p>
+        <div class="menu-list">
+            <div class="menu-item" onclick="window.open('https://google.com', '_blank')"><span>Resmi internet sitesi</span> <span>&gt;</span></div>
+            <div class="menu-item" onclick="openModal('passwordModal')"><span>Giriş şifresi</span> <span>&gt;</span></div>
+            <div class="menu-item" onclick="openModal('secPasswordModal')"><span>Güvenlik Şifresi</span> <span>&gt;</span></div>
+            <div class="menu-item" onclick="openActionModal('Yardım Merkezi', 'Destek ekibimizle görüşmek için yardım talebi oluşturun.')"><span>Yardım Merkezi</span> <span>&gt;</span></div>
+            <div class="menu-item" onclick="openModal('langModal')"><span>Dili Değiştir</span> <span>&gt;</span></div>
         </div>
+
+        <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
     </div>
 
-    <div id="vipModal" class="modal">
+    <div id="actionModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModals()">&times;</span>
-            <p id="vipModalText" class="modal-title">Depozito gerekli</p>
-            <button class="modal-btn" onclick="goToDeposit()">Onaylamak</button>
+            <div class="modal-header">
+                <span id="actionModalTitle">Bilgi</span>
+                <span style="cursor:pointer;" onclick="closeModal('actionModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="actionModalDesc">Açıklama</p>
+                <button class="modal-btn" onclick="closeModal('actionModal')">Tamam</button>
+            </div>
         </div>
     </div>
 
-    <div id="addressModal" class="modal">
+    <div id="passwordModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeModals()">&times;</span>
-            <h3 style="font-size: 15px; color: #38bdf8; margin-bottom: 5px;" id="addrTitle">Yatırım Adresi</h3>
-            <p style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Lütfen bu adrese transfer yapın:</p>
-            <div class="address-box">0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc</div>
-            <button class="modal-btn" style="background: linear-gradient(135deg, #22c55e, #15803d); margin-top: 15px;" onclick="notifyAdmin()">Yatırımı Bildir (Onaya Gönder)</button>
-            <p style="font-size: 10px; color: #fbbf24; margin-top: 8px;">⚠️ Transfer sonrası butona basarak yöneticiye haber verin.</p>
+            <div class="modal-header">
+                <span>Giriş Şifresini Değiştir</span>
+                <span style="cursor:pointer;" onclick="closeModal('passwordModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="password" class="modal-input" placeholder="Eski şifre">
+                <input type="password" class="modal-input" placeholder="Yeni şifre">
+                <button class="modal-btn" onclick="alert('Şifre başarıyla güncellendi!'); closeModal('passwordModal');">Güncelle</button>
+            </div>
         </div>
     </div>
 
-    <nav class="nav-bar">
-        <button class="nav-item active" onclick="tabDegistir('ev', this)"><span>🏠</span>Ev</button>
-        <button class="nav-item" onclick="tabDegistir('gorevler', this)"><span>📋</span>Görevler</button>
-        <button class="nav-item" onclick="tabDegistir('takim', this)"><span>👥</span>Takım</button>
-        <button class="nav-item" onclick="tabDegistir('vip', this)"><span>⭐</span>VIP</button>
-        <button class="nav-item" onclick="tabDegistir('ben', this)"><span>👤</span>Ben</button>
-    </nav>
+    <div id="secPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Güvenlik Şifresini Değiştir</span>
+                <span style="cursor:pointer;" onclick="closeModal('secPasswordModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="password" class="modal-input" placeholder="Eski güvenlik şifresi">
+                <input type="password" class="modal-input" placeholder="Yeni güvenlik şifresi">
+                <button class="modal-btn" onclick="alert('Güvenlik şifresi güncellendi!'); closeModal('secPasswordModal');">Güncelle</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="langModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span>Dili Değiştir</span>
+                <span style="cursor:pointer;" onclick="closeModal('langModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p style="cursor:pointer; padding:8px;" onclick="setLang('English')">English</p>
+                <p style="cursor:pointer; padding:8px; color:#38bdf8;" onclick="setLang('Türkçe')">Türkçe ✅</p>
+                <p style="cursor:pointer; padding:8px;" onclick="setLang('Русский')">Русский</p>
+            </div>
+        </div>
+    </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        let userTelegramId = "Bilinmiyor";
-        let userUsername = "Misafir";
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            if (tg.initDataUnsafe.user.id) userTelegramId = tg.initDataUnsafe.user.id;
-            if (tg.initDataUnsafe.user.username) userUsername = "@" + tg.initDataUnsafe.user.username;
-        }
-        
-        document.getElementById("userId").innerText = userTelegramId;
-        document.getElementById("refLink").value = "https://t.me/MahriBot?start=ref_" + userTelegramId;
+        window.onload = function() {
+            let savedEmail = localStorage.getItem("user_email");
+            let savedCode = localStorage.getItem("user_code");
 
-        function tabDegistir(tabId, element) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
+            if (savedEmail) {
+                showProfile(savedEmail, savedCode);
+            } else {
+                let randomCode = Math.floor(100000 + Math.random() * 900000);
+                document.getElementById("inviteCode").value = randomCode;
+            }
+        };
+
+        function switchTab(type) {
+            if(type === 'email') {
+                document.getElementById('emailForm').style.display = 'block';
+                document.getElementById('mobileForm').style.display = 'none';
+                document.getElementById('tabEmailBtn').classList.add('active');
+                document.getElementById('tabMobileBtn').classList.remove('active');
+            } else {
+                document.getElementById('emailForm').style.display = 'none';
+                document.getElementById('mobileForm').style.display = 'block';
+                document.getElementById('tabMobileBtn').classList.add('active');
+                document.getElementById('tabEmailBtn').classList.remove('active');
+            }
         }
 
-        let currentPrice = 5;
-        function openVipModal(price) {
-            currentPrice = price;
-            document.getElementById("vipModalText").innerText = `Mevduat bakiyenizle otomatik olarak kilidi açın. Depozito gerekli $${price},00`;
-            document.getElementById("vipModal").style.display = "flex";
+        // Şifre Çizgileri Kuralı (Harf: Kırmızı, Özel Karakter: Sarı, Rakam: Yeşil)
+        function checkPasswordStrength(password, barContainerId) {
+            let bars = document.getElementById(barContainerId).children;
+            if (password.length === 0) {
+                for (let bar of bars) bar.style.backgroundColor = "#1a3642";
+                return;
+            }
+
+            let hasLetter = /[a-zA-Z]/.test(password);
+            let hasSpecial = /[@^#_÷<&!]/.test(password) || /[^a-zA-Z0-9]/.test(password);
+            let hasNumber = /[0-9]/.test(password);
+
+            let color = "#ef4444"; // Kırmızı (Sadece harf)
+
+            if (hasLetter && hasSpecial && hasNumber) {
+                color = "#22c55e"; // Hepsi varsa Yeşil
+            } else if (hasSpecial || hasNumber) {
+                color = "#eab308"; // Özel karakter veya rakam varsa Sarı
+            }
+
+            for (let bar of bars) {
+                bar.style.backgroundColor = color;
+            }
         }
-        function goToDeposit() {
-            closeModals();
-            document.getElementById("addrTitle").innerText = `Yatırım Tutarı: $${currentPrice},00`;
-            document.getElementById("addressModal").style.display = "flex";
+
+        function togglePassword(inputId, icon) {
+            let input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.innerText = "👁️‍🗨️";
+            } else {
+                input.type = "password";
+                icon.innerText = "👁️";
+            }
         }
-        function openAddressModal(netName) {
-            document.getElementById("addrTitle").innerText = netName + " Yatırım Adresi";
-            document.getElementById("addressModal").style.display = "flex";
+
+        function handleAuth(event) {
+            event.preventDefault();
+            let emailVal = document.getElementById('emailInput').value;
+            let inviteVal = document.getElementById('inviteCode').value;
+
+            localStorage.setItem("user_email", emailVal);
+            localStorage.setItem("user_code", inviteVal);
+
+            showProfile(emailVal, inviteVal);
         }
-        function notifyAdmin() {
-            let message = encodeURIComponent(`🚨 YATIRIM BİLDİRİMİ!\n\nKullanıcı ID: ${userTelegramId}\nKullanıcı Adı: ${userUsername}\nTutar: $${currentPrice},00 USDT\n\nLütfen hesabı kontrol edip VIP yetkisini verin!`);
-            window.open(`https://t.me/MahriBot?text=${message}`, "_blank");
+
+        function showProfile(email, code) {
+            document.getElementById('profileEmail').innerText = email;
+            document.getElementById('profileInviteCode').innerText = code;
+            document.getElementById('userAvatarText').innerText = email.charAt(0).toUpperCase();
+
+            document.getElementById('authContainer').style.display = 'none';
+            document.getElementById('profileContainer').style.display = 'block';
         }
-        function closeModals() {
-            document.getElementById("vipModal").style.display = "none";
-            document.getElementById("addressModal").style.display = "none";
+
+        // 18.00 Para Çekme Sinyali Kontrolü
+        function checkWithdrawTime() {
+            let currentHour = new Date().getHours();
+            
+            // Eğer saat 18.00 (18:00 ile 18:59 arası) ise işleme izin ver
+            if (currentHour === 18) {
+                openActionModal("Para Çekme", "Para çekme saati geldi! İşleminiz onaylanıyor...");
+            } else {
+                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi! Lütfen saat 18.00'i bekleyin.");
+            }
         }
+
+        function logout() {
+            localStorage.removeItem("user_email");
+            localStorage.removeItem("user_code");
+            document.getElementById('profileContainer').style.display = 'none';
+            document.getElementById('authContainer').style.display = 'block';
+            location.reload();
+        }
+
+        function copyInviteCode() {
+            let code = document.getElementById('profileInviteCode').innerText;
+            navigator.clipboard.writeText(code);
+            alert("Davet kodu kopyalandı: " + code);
+        }
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function openActionModal(title, desc) {
+            document.getElementById('actionModalTitle').innerText = title;
+            document.getElementById('actionModalDesc').innerText = desc;
+            document.getElementById('actionModal').style.display = 'flex';
+        }
+
+        function setLang(langName) {
+            alert("Dil değiştirildi: " + langName);
+            closeModal('langModal');
+        }
+
         window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) { closeModals(); }
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
         }
     </script>
 </body>
 </html>
-    <div id="ben" class="tab-content">
-        <div class="header"><h2>Profil</h2></div>
-        <div class="card">
-            <h2>👤 Kullanıcı Bilgileri</h2>
-            <p>ID: <strong id="userId" style="color:#38bdf8;">Yükleniyor...</strong></p>
-            <p>Ana Bakiye: <strong id="userBalance" style="color:#22c55e;">0.00 USDT</strong></p>
-        </div>
-    </div>
