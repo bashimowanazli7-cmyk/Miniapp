@@ -1,218 +1,228 @@
-crypto-vault-ai/
-│
-├── README.md
-├── .gitignore
-├── .env.example
-├── requirements.txt
-├── Dockerfile
-├── docker-compose.yml
-│
-├── bot/
-│   ├── __init__.py
-│   ├── main.py
-│   ├── config.py
-│   │
-│   ├── handlers/
-│   │   ├── __init__.py
-│   │   ├── start.py
-│   │   ├── auth.py
-│   │   ├── home.py
-│   │   ├── deposit.py
-│   │   ├── withdrawal.py
-│   │   ├── vip.py
-│   │   ├── tasks.py
-│   │   ├── referrals.py
-│   │   ├── profile.py
-│   │   ├── languages.py
-│   │   └── records.py
-│   │
-│   ├── keyboards/
-│   │   ├── __init__.py
-│   │   ├── main_menu.py
-│   │   ├── auth.py
-│   │   ├── vip.py
-│   │   ├── tasks.py
-│   │   ├── deposit.py
-│   │   ├── withdrawal.py
-│   │   └── languages.py
-│   │
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── auth_service.py
-│   │   ├── balance_service.py
-│   │   ├── vip_service.py
-│   │   ├── task_service.py
-│   │   ├── referral_service.py
-│   │   ├── notification_service.py
-│   │   └── ledger_service.py
-│   │
-│   └── utils/
-│       ├── __init__.py
-│       ├── password.py
-│       ├── referral.py
-│       ├── validators.py
-│       └── datetime.py
-│
-├── backend/
-│   ├── __init__.py
-│   ├── main.py
-│   │
-│   ├── api/
-│   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── users.py
-│   │   ├── balances.py
-│   │   ├── deposits.py
-│   │   ├── withdrawals.py
-│   │   ├── vip.py
-│   │   ├── tasks.py
-│   │   ├── referrals.py
-│   │   └── records.py
-│   │
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── user.py
-│   │   ├── balance.py
-│   │   ├── ledger.py
-│   │   ├── deposit.py
-│   │   ├── withdrawal.py
-│   │   ├── vip.py
-│   │   ├── task.py
-│   │   ├── referral.py
-│   │   └── transaction.py
-│   │
-│   ├── schemas/
-│   │   ├── __init__.py
-│   │   ├── auth.py
-│   │   ├── deposit.py
-│   │   ├── withdrawal.py
-│   │   ├── vip.py
-│   │   └── task.py
-│   │
-│   ├── services/
-│   │   ├── auth.py
-│   │   ├── balances.py
-│   │   ├── deposits.py
-│   │   ├── withdrawals.py
-│   │   ├── vip.py
-│   │   ├── tasks.py
-│   │   ├── referrals.py
-│   │   └── ledger.py
-│   │
-│   └── security/
-│       ├── passwords.py
-│       ├── sessions.py
-│       └── permissions.py
-│
-├── admin/
-│   ├── __init__.py
-│   ├── panel.py
-│   ├── users.py
-│   ├── deposits.py
-│   ├── withdrawals.py
-│   ├── rewards.py
-│   ├── tasks.py
-│   └── audit_logs.py
-│
-├── scheduler/
-│   ├── __init__.py
-│   ├── scheduler.py
-│   ├── daily_tasks.py
-│   └── notifications.py
-│
-├── blockchain/
-│   ├── __init__.py
-│   ├── networks.py
-│   ├── addresses.py
-│   ├── qr.py
-│   ├── validators.py
-│   ├── tx_tracker.py
-│   ├── tron.py
-│   ├── evm.py
-│   └── testnet.py
-│
-├── webapp/
-│   ├── index.html
-│   ├── package.json
-│   ├── vite.config.js
-│   │
-│   └── src/
-│       ├── main.jsx
-│       ├── App.jsx
-│       │
-│       ├── assets/
-│       │   └── logo.png
-│       │
-│       ├── components/
-│       │   ├── Header.jsx
-│       │   ├── BottomNav.jsx
-│       │   ├── BalanceCard.jsx
-│       │   ├── VipCard.jsx
-│       │   ├── TaskCard.jsx
-│       │   ├── DepositCard.jsx
-│       │   ├── WithdrawalForm.jsx
-│       │   └── TransactionItem.jsx
-│       │
-│       ├── pages/
-│       │   ├── Login.jsx
-│       │   ├── Register.jsx
-│       │   ├── Home.jsx
-│       │   ├── Tasks.jsx
-│       │   ├── Team.jsx
-│       │   ├── VIP.jsx
-│       │   ├── Profile.jsx
-│       │   ├── Deposit.jsx
-│       │   ├── Withdrawal.jsx
-│       │   ├── Records.jsx
-│       │   ├── ChangePassword.jsx
-│       │   └── Languages.jsx
-│       │
-│       ├── i18n/
-│       │   ├── index.js
-│       │   ├── tr.json
-│       │   ├── en.json
-│       │   ├── ru.json
-│       │   ├── de.json
-│       │   ├── fr.json
-│       │   ├── es.json
-│       │   └── ... 
-│       │
-│       └── styles/
-│           ├── global.css
-│           ├── auth.css
-│           ├── home.css
-│           ├── vip.css
-│           ├── tasks.css
-│           ├── deposit.css
-│           └── profile.css
-│
-├── database/
-│   ├── migrations/
-│   └── seed.py
-│
-├── tests/
-│   ├── test_auth.py
-│   ├── test_vip.py
-│   ├── test_referrals.py
-│   ├── test_tasks.py
-│   ├── test_deposits.py
-│   └── test_withdrawals.py
-│
-└── scripts/
-    ├── create_admin.py
-    └── seed_vips.pyTRON_DEPOSIT_ADDRESS = "TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC"
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Crypto Vault AI</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #111; color: #fff; padding: 20px; }
+        .logo { text-align: center; font-size: 24px; font-weight: bold; color: #d4af37; margin-bottom: 20px; }
+        .container { max-width: 400px; margin: 0 auto; background: #222; padding: 20px; border-radius: 10px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0; background: #333; border: 1px solid #444; color: #fff; border-radius: 5px; }
+        .strength-bars { display: flex; gap: 5px; margin-top: 5px; }
+        .bar { flex: 1; height: 4px; background-color: #444; transition: 0.3s; }
+        .red { background-color: #ff4d4d; }
+        .yellow { background-color: #ffcc00; }
+        .green { background-color: #2ecc71; }
+        .btn { width: 100%; padding: 10px; background: #d4af37; border: none; font-weight: bold; cursor: pointer; border-radius: 5px; margin-top: 10px; }
+    </style>
+</head>
+<body>
 
-EVM_DEPOSIT_ADDRESS = (
-    "0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc"
-)VIP_LEVELS = [
-    (1, 10.00),
-    (2, 40.00),
-    (3, 100.00),
-    (4, 250.00),
-    (5, 740.00),
-    (6, 1050.00),
-    (7, 4200.00),
-    (8, 9800.00),
-    (9, 20000.00),
-    (10, 45000.00),
-]
+<div class="container">
+    <div class="logo">🪙 Crypto Vault AI</div>
+    
+    <!-- Giriş / Kayıt Formu -->
+    <div id="auth-screen">
+        <h3>Giriş / Kayıt Ol</h3>
+        <select id="countrySelect">
+            <option value="+993">🇹🇲 Türkmenistan (+993)</option>
+            <option value="+90">🇹🇷 Türkiye (+90)</option>
+            <option value="+1">🇺🇸 ABD (+1)</option>
+        </select>
+        <input type="text" id="phoneInput" placeholder="Telefon veya E-posta">
+        
+        <input type="password" id="passwordInput" placeholder="Şifre" oninput="checkPasswordStrength()">
+        <div class="strength-bars">
+            <div id="barLetter" class="bar"></div>
+            <div id="barSpecial" class="bar"></div>
+            <div id="barNumber" class="bar"></div>
+        </div>
+
+        <label style="display: flex; align-items: center; gap: 10px; margin-top: 15px; font-size: 14px;">
+            <input type="checkbox" id="rememberMe"> Beni hatırla
+        </label>
+
+        <button class="btn" onclick="submitAuth()">Devam Et</button>
+    </div>
+</div>
+
+<script>
+function checkPasswordStrength() {
+    const val = document.getElementById('passwordInput').value;
+    const barLetter = document.getElementById('barLetter');
+    const barSpecial = document.getElementById('barSpecial');
+    const barNumber = document.getElementById('barNumber');
+
+    // Harf kontrolü -> Kırmızı çizgi
+    if (/[a-zA-Z]/.test(val)) {
+        barLetter.className = 'bar red';
+    } else {
+        barLetter.className = 'bar';
+    }
+
+    // Özel karakter kontrolü -> Sarı çizgi
+    if (/[^A-Za-z0-9]/.test(val)) {
+        barSpecial.className = 'bar yellow';
+    } else {
+        barSpecial.className = 'bar';
+    }
+
+    // Rakam kontrolü -> Yeşil çizgi
+    if (/[0-9]/.test(val)) {
+        barNumber.className = 'bar green';
+    } else {
+        barNumber.className = 'bar';
+    }
+}
+
+function submitAuth() {
+    alert("İşlem başarılı! Crypto Vault AI platformuna hoş geldiniz.");
+}
+</script>
+
+</body>
+</html>
+require('dotenv').config();
+const express = require('express');
+const bcrypt = require('bcrypt');
+const app = express();
+
+app.use(express.json());
+
+// Tanımlanan Resmi Hazine Adresleri
+const TREASURY_WALLETS = {
+    "TRX": process.env.TREASURY_TRX || "TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC",
+    "BEP20-USDT": process.env.TREASURY_BEP20 || "0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc"
+};
+
+// 1. Mevduat Adresi ve Ağ Uyarı Endpoint'i
+app.get('/api/deposit/address/:network', (req, res) => {
+    const { network } = req.params;
+    const address = TREASURY_WALLETS[network];
+    
+    if (!address) {
+        return res.status(400).json({ error: "Geçersiz ağ seçimi!" });
+    }
+
+    res.json({
+        network: network,
+        address: address,
+        warning: `Seçtiğiniz ağa (${network}) göre yalnızca bu ağ üzerinden transfer yapın. Yanlış ağ seçimi fonların kaybolmasına neden olabilir.`
+    });
+});
+
+// 2. Admin 18:00 Ödül Onay Mekanizması
+app.post('/api/admin/task-approve', async (req, res) => {
+    const { claimId, action } = req.body; // action: 'approve' veya 'reject'
+
+    if (action === 'approve') {
+        // Gerçek sistemde veritabanı transaction açılır, bakiye ve ledger_entries güncellenir.
+        return res.json({ 
+            success: true, 
+            message: "Ödül başarıyla onaylandı ve kullanıcı hesabına eklendi." 
+        });
+    } else {
+        return res.json({ success: true, message: "Ödül talebi reddedildi." });
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Crypto Vault AI Server running on port ${PORT}`);
+});
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    telegram_id BIGINT UNIQUE,
+    email VARCHAR(255) UNIQUE,
+    phone VARCHAR(50) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    referral_code VARCHAR(50) UNIQUE,
+    referred_by VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE balances (
+    user_id INT REFERENCES users(id) PRIMARY KEY,
+    total_balance NUMERIC(18, 8) DEFAULT 0.00,
+    deposit_balance NUMERIC(18, 8) DEFAULT 0.00,
+    available_balance NUMERIC(18, 8) DEFAULT 0.00
+);
+
+CREATE TABLE ledger_entries (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    amount NUMERIC(18, 8) NOT NULL,
+    type VARCHAR(50) NOT NULL, -- deposit, withdrawal, reward, vip_lock
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE deposits (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    network VARCHAR(50) NOT NULL,
+    amount NUMERIC(18, 8),
+    txid VARCHAR(255) UNIQUE,
+    status VARCHAR(50) DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE withdrawals (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    network VARCHAR(50) NOT NULL,
+    amount NUMERIC(18, 8) NOT NULL,
+    address VARCHAR(255) NOT NULL,
+    status VARCHAR(50) DEFAULT 'pending', -- pending, broadcast, confirming, completed
+    txid VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE user_vips (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    vip_level INT NOT NULL,
+    status VARCHAR(50) DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tasks (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255),
+    reward_amount NUMERIC(18, 8),
+    start_time TIME DEFAULT '18:00:00',
+    end_time TIME DEFAULT '18:10:00'
+);
+
+CREATE TABLE task_claims (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    task_id INT REFERENCES tasks(id),
+    reward NUMERIC(18, 8),
+    status VARCHAR(50) DEFAULT 'pending_admin',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE referrals (
+    id SERIAL PRIMARY KEY,
+    referrer_id INT REFERENCES users(id),
+    referee_id INT REFERENCES users(id),
+    level INT NOT NULL, -- 1, 2, veya 3
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+# .gitignore
+.env
+*.key
+*.pem
+node_modules/
+__pycache__/
+dist/
+build/
+.DS_Store
+PORT=3000
+BOT_TOKEN=your_telegram_bot_token_here
+DATABASE_URL=postgresql://user:password@localhost:5432/cryptovault
+JWT_SECRET=super_secure_jwt_secret_key_here
+ADMIN_CHAT_ID=your_admin_telegram_chat_id
+TREASURY_TRX=TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC
+TREASURY_BEP20=0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc
