@@ -92,7 +92,7 @@
             margin-bottom: 14px;
             position: relative;
         }
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
             padding: 12px 40px 12px 15px;
             background-color: #0b191e;
@@ -101,9 +101,13 @@
             color: white;
             font-size: 13px;
         }
-        .input-group input:focus {
+        .input-group input:focus, .input-group select:focus {
             border-color: #0d5c36;
             outline: none;
+        }
+        .phone-row {
+            display: flex;
+            gap: 8px;
         }
         .eye-icon {
             position: absolute;
@@ -113,18 +117,19 @@
             color: #94a3b8;
             font-size: 16px;
         }
+        /* Küçük ve zarif şifre çizgileri */
         .password-strength {
             display: flex;
-            gap: 6px;
-            margin-top: 6px;
-            margin-bottom: 10px;
+            gap: 4px;
+            margin-top: 4px;
+            margin-bottom: 8px;
             padding-left: 2px;
         }
         .strength-bar {
             flex: 1;
-            height: 4px;
+            height: 2px;
             background-color: #1a3642;
-            border-radius: 2px;
+            border-radius: 1px;
             transition: background-color 0.3s ease;
         }
         .submit-btn {
@@ -333,6 +338,7 @@
 </head>
 <body>
 
+    <!-- GİRİŞ / KAYIT EKRANI -->
     <div class="container" id="authContainer">
         <div class="top-bar">
             <button class="lang-btn" onclick="openModal('langModal')">🌐</button>
@@ -349,13 +355,38 @@
                 <button type="button" class="auth-tab" id="tabMobileBtn" onclick="switchTab('mobile')">Mobil</button>
             </div>
 
+            <!-- E-posta Alanı -->
             <div id="emailForm" class="input-group">
                 <input type="email" id="emailInput" placeholder="E-posta adresinizi girin" required>
             </div>
+
+            <!-- Mobil Alanı (Çoklu Ülke Kodu ile birlikte düzgün yerinde) -->
             <div id="mobileForm" class="input-group" style="display: none;">
-                <input type="tel" id="mobileInput" placeholder="Cep telefonu numarası">
+                <div class="phone-row">
+                    <select id="countryCodeSelect" style="width: 110px; cursor: pointer; color: #38bdf8;">
+                        <option value="+993">🇹🇲 +993</option>
+                        <option value="+90">🇹🇷 +90</option>
+                        <option value="+1">🇺🇸 +1</option>
+                        <option value="+44">🇬🇧 +44</option>
+                        <option value="+49">🇩🇪 +49</option>
+                        <option value="+7">🇷🇺 +7</option>
+                        <option value="+994">🇦🇿 +994</option>
+                        <option value="+998">🇺🇿 +998</option>
+                        <option value="+77">🇰🇿 +77</option>
+                        <option value="+33">🇫🇷 +33</option>
+                        <option value="+39">🇮🇹 +39</option>
+                        <option value="+34">🇪🇸 +34</option>
+                        <option value="+81">🇯🇵 +81</option>
+                        <option value="+82">🇰🇷 +82</option>
+                        <option value="+86">🇨🇳 +86</option>
+                        <option value="+971">🇦🇪 +971</option>
+                        <option value="+966">🇸🇦 +966</option>
+                    </select>
+                    <input type="tel" id="mobileInput" placeholder="Cep telefonu numarası" style="flex: 1;">
+                </div>
             </div>
 
+            <!-- 1. Şifre: Giriş Şifresi -->
             <div class="input-group">
                 <input type="password" id="loginPass" placeholder="Giriş şifresi" required oninput="checkPasswordStrength(this.value, 'pass1Bars')">
                 <span class="eye-icon" onclick="togglePassword('loginPass', this)">👁️</span>
@@ -366,19 +397,15 @@
                 <div class="strength-bar"></div>
             </div>
 
+            <!-- 2. Şifre: Güvenlik Şifresi -->
             <div class="input-group">
-                <input type="password" id="loginPassConfirm" placeholder="Giriş şifresi (Tekrar)" required oninput="checkPasswordStrength(this.value, 'pass2Bars')">
-                <span class="eye-icon" onclick="togglePassword('loginPassConfirm', this)">👁️</span>
+                <input type="password" id="secPass" placeholder="Güvenlik şifresi" required oninput="checkPasswordStrength(this.value, 'pass2Bars')">
+                <span class="eye-icon" onclick="togglePassword('secPass', this)">👁️</span>
             </div>
             <div class="password-strength" id="pass2Bars">
                 <div class="strength-bar"></div>
                 <div class="strength-bar"></div>
                 <div class="strength-bar"></div>
-            </div>
-
-            <div class="input-group">
-                <input type="password" id="secPass" placeholder="Güvenlik şifresi" required>
-                <span class="eye-icon" onclick="togglePassword('secPass', this)">👁️</span>
             </div>
 
             <div class="input-group">
@@ -389,6 +416,7 @@
         </form>
     </div>
 
+    <!-- PROFİL / BEN EKRANI -->
     <div class="profile-container" id="profileContainer">
         <div class="profile-header">
             <div class="profile-avatar" id="userAvatarText">CV</div>
@@ -445,6 +473,7 @@
         <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
     </div>
 
+    <!-- Modallar -->
     <div id="actionModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -530,7 +559,7 @@
             }
         }
 
-        // Şifre Çizgileri Kuralı (Harf: Kırmızı, Özel Karakter: Sarı, Rakam: Yeşil)
+        // Küçük ve zarif şifre çizgi renkleri (Harf, Özel Karakter, Rakam kontrolü)
         function checkPasswordStrength(password, barContainerId) {
             let bars = document.getElementById(barContainerId).children;
             if (password.length === 0) {
@@ -539,15 +568,15 @@
             }
 
             let hasLetter = /[a-zA-Z]/.test(password);
-            let hasSpecial = /[@^#_÷<&!]/.test(password) || /[^a-zA-Z0-9]/.test(password);
+            let hasSpecial = /[^a-zA-Z0-9]/.test(password);
             let hasNumber = /[0-9]/.test(password);
 
-            let color = "#ef4444"; // Kırmızı (Sadece harf)
+            let color = "#ef4444"; // Kırmızı
 
             if (hasLetter && hasSpecial && hasNumber) {
-                color = "#22c55e"; // Hepsi varsa Yeşil
+                color = "#22c55e"; // Yeşil
             } else if (hasSpecial || hasNumber) {
-                color = "#eab308"; // Özel karakter veya rakam varsa Sarı
+                color = "#eab308"; // Sarı
             }
 
             for (let bar of bars) {
@@ -568,13 +597,23 @@
 
         function handleAuth(event) {
             event.preventDefault();
-            let emailVal = document.getElementById('emailInput').value;
+            let isEmailActive = document.getElementById('emailForm').style.display !== 'none';
+            let identifier = "";
+
+            if (isEmailActive) {
+                identifier = document.getElementById('emailInput').value;
+            } else {
+                let countryCode = document.getElementById('countryCodeSelect').value;
+                let phoneNum = document.getElementById('mobileInput').value;
+                identifier = countryCode + " " + phoneNum;
+            }
+
             let inviteVal = document.getElementById('inviteCode').value;
 
-            localStorage.setItem("user_email", emailVal);
+            localStorage.setItem("user_email", identifier);
             localStorage.setItem("user_code", inviteVal);
 
-            showProfile(emailVal, inviteVal);
+            showProfile(identifier, inviteVal);
         }
 
         function showProfile(email, code) {
@@ -586,15 +625,19 @@
             document.getElementById('profileContainer').style.display = 'block';
         }
 
-        // 18.00 Para Çekme Sinyali Kontrolü
+        // 18.00 - 18.10 Arası Para Çekme Sinyal Kontrolü
         function checkWithdrawTime() {
-            let currentHour = new Date().getHours();
+            let now = new Date();
+            let currentHour = now.getHours();
+            let currentMinute = now.getMinutes();
             
-            // Eğer saat 18.00 (18:00 ile 18:59 arası) ise işleme izin ver
-            if (currentHour === 18) {
-                openActionModal("Para Çekme", "Para çekme saati geldi! İşleminiz onaylanıyor...");
+            let isTimeValid = (currentHour === 18 && currentMinute >= 0 && currentMinute <= 10);
+            
+            if (isTimeValid) {
+                let remainingMinutes = 10 - currentMinute;
+                openActionModal("Para Çekme", "✅ Para çekme penceresi açık! Kapanmasına yaklaşık " + remainingMinutes + " dakika kaldı. İşleminiz onaylanıyor...");
             } else {
-                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi! Lütfen saat 18.00'i bekleyin.");
+                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi veya süre doldu!\n\nİşlem saatleri: Her gün 18.00 - 18.10 arası.");
             }
         }
 
@@ -639,53 +682,3 @@
     </script>
 </body>
 </html>
-<script>
-    // 18.00 - 18.10 Arası Para Çekme Sinyal Kontrolü
-    function checkWithdrawTime() {
-        let now = new Date();
-        let currentHour = now.getHours();
-        let currentMinute = now.getMinutes();
-        
-        // Saat 18.00 ile 18.10 (dahil) arası mı kontrol et
-        let isTimeValid = (currentHour === 18 && currentMinute >= 0 && currentMinute <= 10);
-        
-        if (isTimeValid) {
-            let remainingMinutes = 10 - currentMinute;
-            if(typeof openActionModal === 'function') {
-                openActionModal("Para Çekme", "✅ Para çekme penceresi açık! Kapanmasına yaklaşık " + remainingMinutes + " dakika kaldı. İşleminiz onaylanıyor...");
-            } else {
-                alert("✅ Para çekme penceresi açık! İşleminiz onaylanıyor...");
-            }
-        } else {
-            // Zaman dışındaysa uyarı sinyali ver
-            if(typeof openActionModal === 'function') {
-                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi veya süre doldu!\n\nİşlem saatleri: Her gün 18.00 - 18.10 arası.");
-            } else {
-                alert("⚠️ Para çekme vakti henüz gelmedi! Lütfen saat 18.00 - 18.10 arasında tekrar deneyin.");
-            }
-        }
-    }
-</script>
-<div style="display: flex; gap: 8px;">
-    <select id="countryCodeSelect" style="width: 110px; padding: 12px 8px; background-color: #0b191e; border: 1px solid #1a3642; border-radius: 10px; color: #38bdf8; font-size: 13px; outline: none; cursor: pointer;">
-        <option value="+993">🇹🇲 +993</option>
-        <option value="+90">🇹🇷 +90</option>
-        <option value="+1">🇺🇸 +1</option>
-        <option value="+44">🇬🇧 +44</option>
-        <option value="+49">🇩🇪 +49</option>
-        <option value="+7">🇷🇺 +7</option>
-        <option value="+994">🇦🇿 +994</option>
-        <option value="+998">🇺🇿 +998</option>
-        <option value="+77">🇰🇿 +77</option>
-        <option value="+33">🇫🇷 +33</option>
-        <option value="+39">🇮🇹 +39</option>
-        <option value="+34">🇪🇸 +34</option>
-        <option value="+81">🇯🇵 +81</option>
-        <option value="+82">🇰🇷 +82</option>
-        <option value="+86">🇨🇳 +86</option>
-        <option value="+971">🇦🇪 +971</option>
-        <option value="+966">🇸🇦 +966</option>
-    </select>
-    
-    <input type="tel" id="mobileInput" placeholder="Telefon numarası" style="flex: 1; padding: 12px 15px; background-color: #0b191e; border: 1px solid #1a3642; border-radius: 10px; color: white; font-size: 13px;" autocomplete="tel">
-</div>
