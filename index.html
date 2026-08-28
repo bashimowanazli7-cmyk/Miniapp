@@ -639,3 +639,53 @@
     </script>
 </body>
 </html>
+<script>
+    // 18.00 - 18.10 Arası Para Çekme Sinyal Kontrolü
+    function checkWithdrawTime() {
+        let now = new Date();
+        let currentHour = now.getHours();
+        let currentMinute = now.getMinutes();
+        
+        // Saat 18.00 ile 18.10 (dahil) arası mı kontrol et
+        let isTimeValid = (currentHour === 18 && currentMinute >= 0 && currentMinute <= 10);
+        
+        if (isTimeValid) {
+            let remainingMinutes = 10 - currentMinute;
+            if(typeof openActionModal === 'function') {
+                openActionModal("Para Çekme", "✅ Para çekme penceresi açık! Kapanmasına yaklaşık " + remainingMinutes + " dakika kaldı. İşleminiz onaylanıyor...");
+            } else {
+                alert("✅ Para çekme penceresi açık! İşleminiz onaylanıyor...");
+            }
+        } else {
+            // Zaman dışındaysa uyarı sinyali ver
+            if(typeof openActionModal === 'function') {
+                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi veya süre doldu!\n\nİşlem saatleri: Her gün 18.00 - 18.10 arası.");
+            } else {
+                alert("⚠️ Para çekme vakti henüz gelmedi! Lütfen saat 18.00 - 18.10 arasında tekrar deneyin.");
+            }
+        }
+    }
+</script>
+<div style="display: flex; gap: 8px;">
+    <select id="countryCodeSelect" style="width: 110px; padding: 12px 8px; background-color: #0b191e; border: 1px solid #1a3642; border-radius: 10px; color: #38bdf8; font-size: 13px; outline: none; cursor: pointer;">
+        <option value="+993">🇹🇲 +993</option>
+        <option value="+90">🇹🇷 +90</option>
+        <option value="+1">🇺🇸 +1</option>
+        <option value="+44">🇬🇧 +44</option>
+        <option value="+49">🇩🇪 +49</option>
+        <option value="+7">🇷🇺 +7</option>
+        <option value="+994">🇦🇿 +994</option>
+        <option value="+998">🇺🇿 +998</option>
+        <option value="+77">🇰🇿 +77</option>
+        <option value="+33">🇫🇷 +33</option>
+        <option value="+39">🇮🇹 +39</option>
+        <option value="+34">🇪🇸 +34</option>
+        <option value="+81">🇯🇵 +81</option>
+        <option value="+82">🇰🇷 +82</option>
+        <option value="+86">🇨🇳 +86</option>
+        <option value="+971">🇦🇪 +971</option>
+        <option value="+966">🇸🇦 +966</option>
+    </select>
+    
+    <input type="tel" id="mobileInput" placeholder="Telefon numarası" style="flex: 1; padding: 12px 15px; background-color: #0b191e; border: 1px solid #1a3642; border-radius: 10px; color: white; font-size: 13px;" autocomplete="tel">
+</div>
