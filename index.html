@@ -1,684 +1,125 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crypto Vault</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-        body {
-            background-color: #0b191e;
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        .container {
-            width: 100%;
-            max-width: 400px;
-            background-color: #112229;
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid #1a3642;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-        }
-        .lang-btn {
-            background: none;
-            border: none;
-            color: #38bdf8;
-            font-size: 18px;
-            cursor: pointer;
-        }
-        .logo-area {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .logo-box {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 14px;
-            margin: 0 auto 10px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #38bdf8;
-            font-size: 20px;
-            border: 1px solid #334155;
-        }
-        .logo-area h1 {
-            font-size: 20px;
-            color: #ffffff;
-        }
-        .auth-tabs {
-            display: flex;
-            background-color: #0b191e;
-            border-radius: 12px;
-            padding: 4px;
-            margin-bottom: 20px;
-        }
-        .auth-tab {
-            flex: 1;
-            padding: 10px;
-            text-align: center;
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 10px;
-        }
-        .auth-tab.active {
-            background-color: #0d5c36;
-            color: #ffffff;
-        }
-        .input-group {
-            margin-bottom: 14px;
-            position: relative;
-        }
-        .input-group input, .input-group select {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            background-color: #0b191e;
-            border: 1px solid #1a3642;
-            border-radius: 10px;
-            color: white;
-            font-size: 13px;
-        }
-        .input-group input:focus, .input-group select:focus {
-            border-color: #0d5c36;
-            outline: none;
-        }
-        .phone-row {
-            display: flex;
-            gap: 8px;
-        }
-        .eye-icon {
-            position: absolute;
-            right: 15px;
-            top: 14px;
-            cursor: pointer;
-            color: #94a3b8;
-            font-size: 16px;
-        }
-        /* Küçük ve zarif şifre çizgileri */
-        .password-strength {
-            display: flex;
-            gap: 4px;
-            margin-top: 4px;
-            margin-bottom: 8px;
-            padding-left: 2px;
-        }
-        .strength-bar {
-            flex: 1;
-            height: 2px;
-            background-color: #1a3642;
-            border-radius: 1px;
-            transition: background-color 0.3s ease;
-        }
-        .submit-btn {
-            width: 100%;
-            background-color: #0d5c36;
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-        .submit-btn:hover {
-            background-color: #107544;
-        }
+Telegram Bot
+     ↓
+Giriş / Kayıt
+     ↓
+🏠 EV  ← ANA SAYFA BURASI
+     ↓
+┌──────┬─────────┬──────┬──────┐
+Görev  Takım     VIP    Ben
+              + Mevduat🏆 VIP
 
-        /* Profil / Ben Ekranı */
-        .profile-container {
-            display: none;
-            width: 100%;
-            max-width: 400px;
-            background-color: #112229;
-            border-radius: 20px;
-            padding: 20px;
-            border: 1px solid #1a3642;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-        .profile-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #38bdf8;
-            font-size: 18px;
-            border: 1px solid #334155;
-        }
-        .profile-info h3 {
-            font-size: 13px;
-            color: #ffffff;
-            word-break: break-all;
-        }
-        .profile-info p {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .copy-btn {
-            background-color: #1e293b;
-            color: #38bdf8;
-            border: none;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 10px;
-            cursor: pointer;
-        }
-        .wallet-card {
-            background: linear-gradient(135deg, #152830, #0d1b22);
-            border-radius: 14px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid #1a3642;
-        }
-        .wallet-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-        }
-        .wallet-item {
-            cursor: pointer;
-        }
-        .wallet-item span {
-            font-size: 11px;
-            color: #94a3b8;
-            display: block;
-        }
-        .wallet-item strong {
-            font-size: 16px;
-            color: #ffffff;
-            margin-top: 2px;
-            display: block;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .stat-box {
-            background-color: #0b191e;
-            border-radius: 12px;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #1a3642;
-        }
-        .stat-box span {
-            font-size: 11px;
-            color: #94a3b8;
-            display: block;
-            margin-top: 4px;
-        }
-        .stat-box strong {
-            font-size: 15px;
-            color: #ffffff;
-        }
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .menu-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #0b191e;
-            padding: 12px 15px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #f8fafc;
-            cursor: pointer;
-            border: 1px solid #1a3642;
-        }
-        .menu-item:hover {
-            border-color: #38bdf8;
-        }
-        .logout-btn {
-            width: 100%;
-            background-color: #0d5c36;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+┌──────────────────────┐
+│       VIP 1          │
+│      10,00 USDT      │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-        /* Modallar */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: #112229;
-            width: 90%;
-            max-width: 350px;
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid #1a3642;
-        }
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            color: #38bdf8;
-            font-size: 15px;
-            font-weight: bold;
-        }
-        .modal-body p {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-bottom: 12px;
-        }
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            background-color: #0b191e;
-            border: 1px solid #1a3642;
-            border-radius: 8px;
-            color: white;
-            font-size: 13px;
-            margin-bottom: 12px;
-        }
-        .modal-btn {
-            width: 100%;
-            background-color: #0d5c36;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
+┌──────────────────────┐
+│       VIP 2          │
+│      40,00 USDT      │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-    <!-- GİRİŞ / KAYIT EKRANI -->
-    <div class="container" id="authContainer">
-        <div class="top-bar">
-            <button class="lang-btn" onclick="openModal('langModal')">🌐</button>
-        </div>
+┌──────────────────────┐
+│       VIP 3          │
+│     100,00 USDT      │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-        <div class="logo-area">
-            <div class="logo-box">CV</div>
-            <h1 id="appTitle">Crypto Vault</h1>
-        </div>
+┌──────────────────────┐
+│       VIP 4          │
+│     250,00 USDT      │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-        <form onsubmit="handleAuth(event)">
-            <div class="auth-tabs">
-                <button type="button" class="auth-tab active" id="tabEmailBtn" onclick="switchTab('email')">E-posta</button>
-                <button type="button" class="auth-tab" id="tabMobileBtn" onclick="switchTab('mobile')">Mobil</button>
-            </div>
+┌──────────────────────┐
+│       VIP 5          │
+│     740,00 USDT      │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-            <!-- E-posta Alanı -->
-            <div id="emailForm" class="input-group">
-                <input type="email" id="emailInput" placeholder="E-posta adresinizi girin" required>
-            </div>
+┌──────────────────────┐
+│       VIP 6          │
+│    1.050,00 USDT     │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-            <!-- Mobil Alanı (Çoklu Ülke Kodu ile birlikte düzgün yerinde) -->
-            <div id="mobileForm" class="input-group" style="display: none;">
-                <div class="phone-row">
-                    <select id="countryCodeSelect" style="width: 110px; cursor: pointer; color: #38bdf8;">
-                        <option value="+993">🇹🇲 +993</option>
-                        <option value="+90">🇹🇷 +90</option>
-                        <option value="+1">🇺🇸 +1</option>
-                        <option value="+44">🇬🇧 +44</option>
-                        <option value="+49">🇩🇪 +49</option>
-                        <option value="+7">🇷🇺 +7</option>
-                        <option value="+994">🇦🇿 +994</option>
-                        <option value="+998">🇺🇿 +998</option>
-                        <option value="+77">🇰🇿 +77</option>
-                        <option value="+33">🇫🇷 +33</option>
-                        <option value="+39">🇮🇹 +39</option>
-                        <option value="+34">🇪🇸 +34</option>
-                        <option value="+81">🇯🇵 +81</option>
-                        <option value="+82">🇰🇷 +82</option>
-                        <option value="+86">🇨🇳 +86</option>
-                        <option value="+971">🇦🇪 +971</option>
-                        <option value="+966">🇸🇦 +966</option>
-                    </select>
-                    <input type="tel" id="mobileInput" placeholder="Cep telefonu numarası" style="flex: 1;">
-                </div>
-            </div>
+┌──────────────────────┐
+│       VIP 7          │
+│    4.200,00 USDT     │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-            <!-- 1. Şifre: Giriş Şifresi -->
-            <div class="input-group">
-                <input type="password" id="loginPass" placeholder="Giriş şifresi" required oninput="checkPasswordStrength(this.value, 'pass1Bars')">
-                <span class="eye-icon" onclick="togglePassword('loginPass', this)">👁️</span>
-            </div>
-            <div class="password-strength" id="pass1Bars">
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-            </div>
+┌──────────────────────┐
+│       VIP 8          │
+│    9.800,00 USDT     │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-            <!-- 2. Şifre: Güvenlik Şifresi -->
-            <div class="input-group">
-                <input type="password" id="secPass" placeholder="Güvenlik şifresi" required oninput="checkPasswordStrength(this.value, 'pass2Bars')">
-                <span class="eye-icon" onclick="togglePassword('secPass', this)">👁️</span>
-            </div>
-            <div class="password-strength" id="pass2Bars">
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-                <div class="strength-bar"></div>
-            </div>
+┌──────────────────────┐
+│       VIP 9          │
+│   20.000,00 USDT     │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘
 
-            <div class="input-group">
-                <input type="text" id="inviteCode" readonly style="background-color: #071115; color: #38bdf8; font-weight: bold;">
-            </div>
+┌──────────────────────┐
+│       VIP 10         │
+│   45.000,00 USDT     │
+│                      │
+│   🔒 Şimdi Kilidi Aç │
+└──────────────────────┘VIP 1
+10,00 USDT
 
-            <button type="submit" class="submit-btn">Kayıt Ol / Giriş Yap</button>
-        </form>
-    </div>
-
-    <!-- PROFİL / BEN EKRANI -->
-    <div class="profile-container" id="profileContainer">
-        <div class="profile-header">
-            <div class="profile-avatar" id="userAvatarText">CV</div>
-            <div class="profile-info">
-                <h3 id="profileEmail">kullanici@gmail.com</h3>
-                <p>Davet Kodu: <span id="profileInviteCode" style="color: #38bdf8;"></span> <button class="copy-btn" onclick="copyInviteCode()">Kopyala</button></p>
-            </div>
-        </div>
-
-        <div class="wallet-card">
-            <div class="wallet-row">
-                <div class="wallet-item" onclick="checkWithdrawTime()">
-                    <span>Elektronik cüzdan (USDT)</span>
-                    <strong>0.00 (Çekim)</strong>
-                </div>
-                <div class="wallet-item" onclick="openActionModal('Esnek Cüzdan (USDT)', 'Esnek kazanç ve bakiye detayları.')">
-                    <span>Esnek cüzdan (USDT)</span>
-                    <strong>0.00</strong>
-                </div>
-            </div>
-            <div class="wallet-item" onclick="openActionModal('Freeze İşlemleri', 'Kilitli varlıkların yönetimi.')">
-                <span>Freeze'i aç (USDT)</span>
-                <strong>0</strong>
-            </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-box">
-                <strong>0.00</strong>
-                <span>Toplam gelir (USDT)</span>
-            </div>
-            <div class="stat-box">
-                <strong>0</strong>
-                <span>Toplam komisyon geliri</span>
-            </div>
-            <div class="stat-box">
-                <strong>0</strong>
-                <span>Kümülatif şarj (USDT)</span>
-            </div>
-            <div class="stat-box">
-                <strong>0.00</strong>
-                <span>Kümülatif para çekme (USDT)</span>
-            </div>
-        </div>
-
-        <div class="menu-list">
-            <div class="menu-item" onclick="window.open('https://google.com', '_blank')"><span>Resmi internet sitesi</span> <span>&gt;</span></div>
-            <div class="menu-item" onclick="openModal('passwordModal')"><span>Giriş şifresi</span> <span>&gt;</span></div>
-            <div class="menu-item" onclick="openModal('secPasswordModal')"><span>Güvenlik Şifresi</span> <span>&gt;</span></div>
-            <div class="menu-item" onclick="openActionModal('Yardım Merkezi', 'Destek ekibimizle görüşmek için yardım talebi oluşturun.')"><span>Yardım Merkezi</span> <span>&gt;</span></div>
-            <div class="menu-item" onclick="openModal('langModal')"><span>Dili Değiştir</span> <span>&gt;</span></div>
-        </div>
-
-        <button class="logout-btn" onclick="logout()">Çıkış Yap</button>
-    </div>
-
-    <!-- Modallar -->
-    <div id="actionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span id="actionModalTitle">Bilgi</span>
-                <span style="cursor:pointer;" onclick="closeModal('actionModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p id="actionModalDesc">Açıklama</p>
-                <button class="modal-btn" onclick="closeModal('actionModal')">Tamam</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="passwordModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Giriş Şifresini Değiştir</span>
-                <span style="cursor:pointer;" onclick="closeModal('passwordModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="password" class="modal-input" placeholder="Eski şifre">
-                <input type="password" class="modal-input" placeholder="Yeni şifre">
-                <button class="modal-btn" onclick="alert('Şifre başarıyla güncellendi!'); closeModal('passwordModal');">Güncelle</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="secPasswordModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Güvenlik Şifresini Değiştir</span>
-                <span style="cursor:pointer;" onclick="closeModal('secPasswordModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <input type="password" class="modal-input" placeholder="Eski güvenlik şifresi">
-                <input type="password" class="modal-input" placeholder="Yeni güvenlik şifresi">
-                <button class="modal-btn" onclick="alert('Güvenlik şifresi güncellendi!'); closeModal('secPasswordModal');">Güncelle</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="langModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span>Dili Değiştir</span>
-                <span style="cursor:pointer;" onclick="closeModal('langModal')">&times;</span>
-            </div>
-            <div class="modal-body">
-                <p style="cursor:pointer; padding:8px;" onclick="setLang('English')">English</p>
-                <p style="cursor:pointer; padding:8px; color:#38bdf8;" onclick="setLang('Türkçe')">Türkçe ✅</p>
-                <p style="cursor:pointer; padding:8px;" onclick="setLang('Русский')">Русский</p>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        let tg = window.Telegram.WebApp;
-        tg.expand();
-
-        window.onload = function() {
-            let savedEmail = localStorage.getItem("user_email");
-            let savedCode = localStorage.getItem("user_code");
-
-            if (savedEmail) {
-                showProfile(savedEmail, savedCode);
-            } else {
-                let randomCode = Math.floor(100000 + Math.random() * 900000);
-                document.getElementById("inviteCode").value = randomCode;
-            }
-        };
-
-        function switchTab(type) {
-            if(type === 'email') {
-                document.getElementById('emailForm').style.display = 'block';
-                document.getElementById('mobileForm').style.display = 'none';
-                document.getElementById('tabEmailBtn').classList.add('active');
-                document.getElementById('tabMobileBtn').classList.remove('active');
-            } else {
-                document.getElementById('emailForm').style.display = 'none';
-                document.getElementById('mobileForm').style.display = 'block';
-                document.getElementById('tabMobileBtn').classList.add('active');
-                document.getElementById('tabEmailBtn').classList.remove('active');
-            }
-        }
-
-        // Küçük ve zarif şifre çizgi renkleri (Harf, Özel Karakter, Rakam kontrolü)
-        function checkPasswordStrength(password, barContainerId) {
-            let bars = document.getElementById(barContainerId).children;
-            if (password.length === 0) {
-                for (let bar of bars) bar.style.backgroundColor = "#1a3642";
-                return;
-            }
-
-            let hasLetter = /[a-zA-Z]/.test(password);
-            let hasSpecial = /[^a-zA-Z0-9]/.test(password);
-            let hasNumber = /[0-9]/.test(password);
-
-            let color = "#ef4444"; // Kırmızı
-
-            if (hasLetter && hasSpecial && hasNumber) {
-                color = "#22c55e"; // Yeşil
-            } else if (hasSpecial || hasNumber) {
-                color = "#eab308"; // Sarı
-            }
-
-            for (let bar of bars) {
-                bar.style.backgroundColor = color;
-            }
-        }
-
-        function togglePassword(inputId, icon) {
-            let input = document.getElementById(inputId);
-            if (input.type === "password") {
-                input.type = "text";
-                icon.innerText = "👁️‍🗨️";
-            } else {
-                input.type = "password";
-                icon.innerText = "👁️";
-            }
-        }
-
-        function handleAuth(event) {
-            event.preventDefault();
-            let isEmailActive = document.getElementById('emailForm').style.display !== 'none';
-            let identifier = "";
-
-            if (isEmailActive) {
-                identifier = document.getElementById('emailInput').value;
-            } else {
-                let countryCode = document.getElementById('countryCodeSelect').value;
-                let phoneNum = document.getElementById('mobileInput').value;
-                identifier = countryCode + " " + phoneNum;
-            }
-
-            let inviteVal = document.getElementById('inviteCode').value;
-
-            localStorage.setItem("user_email", identifier);
-            localStorage.setItem("user_code", inviteVal);
-
-            showProfile(identifier, inviteVal);
-        }
-
-        function showProfile(email, code) {
-            document.getElementById('profileEmail').innerText = email;
-            document.getElementById('profileInviteCode').innerText = code;
-            document.getElementById('userAvatarText').innerText = email.charAt(0).toUpperCase();
-
-            document.getElementById('authContainer').style.display = 'none';
-            document.getElementById('profileContainer').style.display = 'block';
-        }
-
-        // 18.00 - 18.10 Arası Para Çekme Sinyal Kontrolü
-        function checkWithdrawTime() {
-            let now = new Date();
-            let currentHour = now.getHours();
-            let currentMinute = now.getMinutes();
-            
-            let isTimeValid = (currentHour === 18 && currentMinute >= 0 && currentMinute <= 10);
-            
-            if (isTimeValid) {
-                let remainingMinutes = 10 - currentMinute;
-                openActionModal("Para Çekme", "✅ Para çekme penceresi açık! Kapanmasına yaklaşık " + remainingMinutes + " dakika kaldı. İşleminiz onaylanıyor...");
-            } else {
-                openActionModal("Sinyal / Uyarı", "⚠️ Para çekme vakti henüz gelmedi veya süre doldu!\n\nİşlem saatleri: Her gün 18.00 - 18.10 arası.");
-            }
-        }
-
-        function logout() {
-            localStorage.removeItem("user_email");
-            localStorage.removeItem("user_code");
-            document.getElementById('profileContainer').style.display = 'none';
-            document.getElementById('authContainer').style.display = 'block';
-            location.reload();
-        }
-
-        function copyInviteCode() {
-            let code = document.getElementById('profileInviteCode').innerText;
-            navigator.clipboard.writeText(code);
-            alert("Davet kodu kopyalandı: " + code);
-        }
-
-        function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function openActionModal(title, desc) {
-            document.getElementById('actionModalTitle').innerText = title;
-            document.getElementById('actionModalDesc').innerText = desc;
-            document.getElementById('actionModal').style.display = 'flex';
-        }
-
-        function setLang(langName) {
-            alert("Dil değiştirildi: " + langName);
-            closeModal('langModal');
-        }
-
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.style.display = 'none';
-            }
-        }
-    </script>
-</body>
-</html>
+🔓 AKTİF ✓Arkadaş Davet Et
+ ↓
+Kişisel Davet Kodu
+ ↓
+Kişisel Davet Linki
+ ↓
+Yeni kullanıcı kayıt olur
+ ↓
+Referral bağlantısı kaydedilir
+ ↓
+Seviye 1 / 2 / 3 ekip takibiTelegram Bot
+      ↓
+Giriş / Kayıt
+      ↓
+🏠 EV
+ ┌────┼─────┬──────┬─────┐
+ ↓    ↓     ↓      ↓     ↓
+Görev Takım  VIP  Ben  Mevduat
+              ↓
+          VIP Kartı
+              ↓
+         Kilidi Aç
+              ↓
+       Backend doğrulaması
+              ↓
+        Aktif VIP
+              ↓
+          Görevler
+              ↓
+        18:00 bildirim
+              ↓
+        Admin Onayı
+              ↓
+      Uygun ödül hesabı
+              ↓
+         Kullanıcı bakiye
+              ↓
+          Geri çekim
+              ↓
+       Blockchain işlemi
+              ↓
+            TXID
+              ↓
+          Kayıtlar
