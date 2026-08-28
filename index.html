@@ -1,436 +1,218 @@
-Telegram Bot
-     ↓
-Giriş / Kayıt
-     ↓
-🏠 EV  ← ANA SAYFA BURASI
-     ↓
-┌──────┬─────────┬──────┬──────┐
-Görev  Takım     VIP    Ben
-              + Mevduat🏆 VIP
-
-┌──────────────────────┐
-│       VIP 1          │
-│      10,00 USDT      │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 2          │
-│      40,00 USDT      │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 3          │
-│     100,00 USDT      │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 4          │
-│     250,00 USDT      │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 5          │
-│     740,00 USDT      │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 6          │
-│    1.050,00 USDT     │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 7          │
-│    4.200,00 USDT     │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 8          │
-│    9.800,00 USDT     │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 9          │
-│   20.000,00 USDT     │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘
-
-┌──────────────────────┐
-│       VIP 10         │
-│   45.000,00 USDT     │
-│                      │
-│   🔒 Şimdi Kilidi Aç │
-└──────────────────────┘VIP 1
-10,00 USDT
-
-🔓 AKTİF ✓Arkadaş Davet Et
- ↓
-Kişisel Davet Kodu
- ↓
-Kişisel Davet Linki
- ↓
-Yeni kullanıcı kayıt olur
- ↓
-Referral bağlantısı kaydedilir
- ↓
-Seviye 1 / 2 / 3 ekip takibiTelegram Bot
-      ↓
-Giriş / Kayıt
-      ↓
-🏠 EV
- ┌────┼─────┬──────┬─────┐
- ↓    ↓     ↓      ↓     ↓
-Görev Takım  VIP  Ben  Mevduat
-              ↓
-          VIP Kartı
-              ↓
-         Kilidi Aç
-              ↓
-       Backend doğrulaması
-              ↓
-        Aktif VIP
-              ↓
-          Görevler
-              ↓
-        18:00 bildirim
-              ↓
-        Admin Onayı
-              ↓
-      Uygun ödül hesabı
-              ↓
-         Kullanıcı bakiye
-              ↓
-          Geri çekim
-              ↓
-       Blockchain işlemi
-              ↓
-            TXID
-              ↓
-          Kayıtlar
-import secrets
-import string
-
-
-def generate_referral_code(length=8):
-    chars = string.ascii_uppercase + string.digits
-    return "CV-" + "".join(
-        secrets.choice(chars)
-        for _ in range(length)
-    )
-
-
-def build_referral_link(code):
-    return f"https://t.me/YOUR_BOT_USERNAME?start=ref_{code}"from dataclasses import dataclass
-from datetime import datetime
-from typing import Optional
-
-
-@dataclass
-class User:
-    id: int
-    telegram_id: int
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    password_hash: str = ""
-    vip: int = 0
-    referral_code: str = ""
-    referred_by: Optional[int] = None
-    remember_me: bool = False
-    language: str = "tr"
-    created_at: datetime = datetime.utcnow()
-
-
-@dataclass
-class LedgerEntry:
-    user_id: int
-    amount: float
-    entry_type: str
-    network: Optional[str]
-    txid: Optional[str]
-    created_at: datetime
-
-
-@dataclass
-class Withdrawal:
-    id: int
-    user_id: int
-    network: str
-    address: str
-    amount: float
-    status: str
-    txid: Optional[str]
-    created_at: datetimeimport re
-import bcrypt
-
-
-SPECIAL_CHARS = r",-&\-\^#>\(@\[\]<×"
-
-
-def hash_password(password: str) -> str:
-    return bcrypt.hashpw(
-        password.encode(),
-        bcrypt.gensalt()
-    ).decode()
-
-
-def verify_password(password: str, password_hash: str) -> bool:
-    return bcrypt.checkpw(
-        password.encode(),
-        password_hash.encode()
-    )
-
-
-def password_indicators(password: str):
-    """
-    Üç küçük gösterge:
-    harf -> kırmızı
-    özel karakter -> sarı
-    rakam -> yeşil
-    """
-
-    has_letter = bool(re.search(r"[A-Za-zА-Яа-я]", password))
-    has_number = bool(re.search(r"\d", password))
-    has_special = bool(re.search(r"[,\\-&\\-\\^#>\\(@\\[\\]<×]", password))
-
-    return {
-        "letter": "red" if has_letter else "off",
-        "special": "yellow" if has_special else "off",
-        "number": "green" if has_number else "off"
-    }async def send_reward_approval(bot, admin_chat_id, user, reward):
-    text = (
-        "🔔 GÜNLÜK ÖDÜL ONAYI\n\n"
-        f"Kullanıcı: {user.email or user.phone}\n"
-        f"VIP: VIP{user.vip}\n"
-        f"Ödül: {reward:.2f} USDT\n\n"
-        "Durum: Onay bekliyor"
-    )
-
-    await bot.send_message(
-        admin_chat_id,
-        text,
-        reply_markup=approval_keyboard(user.id)
-    )
-
-
-def approval_keyboard(user_id):
-    # Gerçek projede InlineKeyboardMarkup kullanılacak.
-    return {
-        "approve": f"reward_approve:{user_id}",
-        "reject": f"reward_reject:{user_id}"
-    }from config import VIP_LEVELS
-
-
-def can_unlock_vip(current_vip, target_vip, deposit_balance):
-    if target_vip not in VIP_LEVELS:
-        return False
-
-    if target_vip <= current_vip:
-        return False
-
-    required = VIP_LEVELS[target_vip]["deposit"]
-
-    return deposit_balance >= required
-
-
-def unlock_message(target_vip):
-    required = VIP_LEVELS[target_vip]["deposit"]
-
-    return (
-        "Mevduat bakiyenizle otomatik olarak kilidi açın.\n\n"
-        f"Depozito gerekli: ${required:,.2f}\n\n"
-        "Onaylamak"
-    )from datetime import datetime, time
-from config import (
-    TASK_START_HOUR,
-    TASK_START_MINUTE,
-    TASK_END_HOUR,
-    TASK_END_MINUTE,
-    DEMO_TASK_REWARD
-)
-
-
-def task_window_open(now=None):
-    now = now or datetime.now()
-
-    start = time(TASK_START_HOUR, TASK_START_MINUTE)
-    end = time(TASK_END_HOUR, TASK_END_MINUTE)
-
-    return start <= now.time() <= end
-
-
-def create_daily_task(user):
-    if user.vip == 0:
-        return None
-
-    return {
-        "user_id": user.id,
-        "title": "Bugünkü görev",
-        "reward": DEMO_TASK_REWARD,
-        "status": "pending",
-        "created_at": datetime.now()
-    }
-
-
-def claim_task(task):
-    if task["status"] != "pending":
-        raise ValueError("Bu görev daha önce alınmış.")
-
-    if not task_window_open():
-        raise ValueError(
-            "Görev yalnızca 18:00 - 18:10 arasında kullanılabilir."
-        )
-
-    task["status"] = "completed"
-
-    return task["reward"]from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message
-from aiogram.filters import CommandStart
-import asyncio
-
-from config import APP_NAME
-
-
-BOT_TOKEN = "PUT_BOT_TOKEN_IN_ENV"
-
-bot = Bot(BOT_TOKEN)
-dp = Dispatcher()
-
-
-@dp.message(CommandStart())
-async def start(message: Message):
-    await message.answer(
-        f"🔐 {APP_NAME}\n\n"
-        "Hoş geldiniz.\n\n"
-        "Giriş yapmak veya kayıt olmak için aşağıdaki seçeneklerden "
-        "birini kullanın."
-    )
-
-
-@dp.message(F.text == "🏠 Ev")
-async def home(message: Message):
-    await message.answer(
-        "🏠 Ev\n\n"
-        "Toplam Bakiye: 0,00 USDT\n"
-        "Mevduat: 0,00 USDT\n"
-        "Kullanılabilir Bakiye: 0,00 USDT\n"
-        "VIP 0\n\n"
-        "Bugünkü görevler: 0\n"
-        "Bugün tamamlanması gereken görevler: 0"
-    )
-
-
-async def main():
-    await dp.start_polling(bot)
-
-
-if __name__ == "__main__":
-    asyncio.run(main())from security import verify_password
-
-
-def validate_withdrawal(
-    password,
-    password_hash,
-    balance,
-    amount,
-    network,
-    address,
-    supported_networks
-):
-    if not verify_password(password, password_hash):
-        raise ValueError("Şifre yanlış. İşlem gerçekleştirilemedi.")
-
-    if amount <= 0:
-        raise ValueError("Geçersiz miktar.")
-
-    if amount > balance:
-        raise ValueError("Yetersiz bakiye.")
-
-    if network not in supported_networks:
-        raise ValueError("Desteklenmeyen ağ.")
-
-    if not address:
-        raise ValueError("Para çekme adresi gerekli.")
-
-    return Truefrom apscheduler.schedulers.asyncio import AsyncIOScheduler
-
-
-def start_scheduler(bot, admin_chat_id, get_active_users):
-    scheduler = AsyncIOScheduler()
-
-    async def daily_job():
-        users = await get_active_users()
-
-        for user in users:
-            if user.vip > 0:
-                # Ödül talebini oluştur.
-                # Gerçek finansal getiri hesabı yapılmaz.
-                await create_pending_reward(user)
-
-                await send_admin_notification(
-                    bot,
-                    admin_chat_id,
-                    user
-                )
-
-    scheduler.add_job(
-        daily_job,
-        "cron",
-        hour=18,
-        minute=0
-    )
-
-    scheduler.start()
-
-
-async def create_pending_reward(user):
-    pass
-
-
-async def send_admin_notification(bot, admin_chat_id, user):
-    text = (
-        "🔔 Yeni görev ödülü onay bekliyor\n\n"
-        f"Kullanıcı: {user.email or user.phone}\n"
-        f"VIP: VIP{user.vip}\n"
-        "Ödül: 2,50 USDT\n\n"
-        "18:00 - 18:10"
-    )
-
-    await bot.send_message(
-        admin_chat_id,
-        text
-    )aiogram
-bcrypt
-APScheduler
-SQLAlchemy
-alembic
-python-dotenv
-qrcode
-web3
-tronpyBOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
-ADMIN_CHAT_ID=YOUR_ADMIN_CHAT_ID
-
-DATABASE_URL=YOUR_DATABASE_URL
-
-# PRIVATE KEYS MUST NOT BE COMMITTED TO GITHUB.
-# Use a secure wallet/custody/signing service for real transactions.
-BLOCKCHAIN_SIGNING_KEY=EVM / BEP20:
-0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc
-
-TRON / TRC20:
-TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC
+crypto-vault-ai/
+│
+├── README.md
+├── .gitignore
+├── .env.example
+├── requirements.txt
+├── Dockerfile
+├── docker-compose.yml
+│
+├── bot/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── config.py
+│   │
+│   ├── handlers/
+│   │   ├── __init__.py
+│   │   ├── start.py
+│   │   ├── auth.py
+│   │   ├── home.py
+│   │   ├── deposit.py
+│   │   ├── withdrawal.py
+│   │   ├── vip.py
+│   │   ├── tasks.py
+│   │   ├── referrals.py
+│   │   ├── profile.py
+│   │   ├── languages.py
+│   │   └── records.py
+│   │
+│   ├── keyboards/
+│   │   ├── __init__.py
+│   │   ├── main_menu.py
+│   │   ├── auth.py
+│   │   ├── vip.py
+│   │   ├── tasks.py
+│   │   ├── deposit.py
+│   │   ├── withdrawal.py
+│   │   └── languages.py
+│   │
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── auth_service.py
+│   │   ├── balance_service.py
+│   │   ├── vip_service.py
+│   │   ├── task_service.py
+│   │   ├── referral_service.py
+│   │   ├── notification_service.py
+│   │   └── ledger_service.py
+│   │
+│   └── utils/
+│       ├── __init__.py
+│       ├── password.py
+│       ├── referral.py
+│       ├── validators.py
+│       └── datetime.py
+│
+├── backend/
+│   ├── __init__.py
+│   ├── main.py
+│   │
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── users.py
+│   │   ├── balances.py
+│   │   ├── deposits.py
+│   │   ├── withdrawals.py
+│   │   ├── vip.py
+│   │   ├── tasks.py
+│   │   ├── referrals.py
+│   │   └── records.py
+│   │
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── user.py
+│   │   ├── balance.py
+│   │   ├── ledger.py
+│   │   ├── deposit.py
+│   │   ├── withdrawal.py
+│   │   ├── vip.py
+│   │   ├── task.py
+│   │   ├── referral.py
+│   │   └── transaction.py
+│   │
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   ├── auth.py
+│   │   ├── deposit.py
+│   │   ├── withdrawal.py
+│   │   ├── vip.py
+│   │   └── task.py
+│   │
+│   ├── services/
+│   │   ├── auth.py
+│   │   ├── balances.py
+│   │   ├── deposits.py
+│   │   ├── withdrawals.py
+│   │   ├── vip.py
+│   │   ├── tasks.py
+│   │   ├── referrals.py
+│   │   └── ledger.py
+│   │
+│   └── security/
+│       ├── passwords.py
+│       ├── sessions.py
+│       └── permissions.py
+│
+├── admin/
+│   ├── __init__.py
+│   ├── panel.py
+│   ├── users.py
+│   ├── deposits.py
+│   ├── withdrawals.py
+│   ├── rewards.py
+│   ├── tasks.py
+│   └── audit_logs.py
+│
+├── scheduler/
+│   ├── __init__.py
+│   ├── scheduler.py
+│   ├── daily_tasks.py
+│   └── notifications.py
+│
+├── blockchain/
+│   ├── __init__.py
+│   ├── networks.py
+│   ├── addresses.py
+│   ├── qr.py
+│   ├── validators.py
+│   ├── tx_tracker.py
+│   ├── tron.py
+│   ├── evm.py
+│   └── testnet.py
+│
+├── webapp/
+│   ├── index.html
+│   ├── package.json
+│   ├── vite.config.js
+│   │
+│   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       │
+│       ├── assets/
+│       │   └── logo.png
+│       │
+│       ├── components/
+│       │   ├── Header.jsx
+│       │   ├── BottomNav.jsx
+│       │   ├── BalanceCard.jsx
+│       │   ├── VipCard.jsx
+│       │   ├── TaskCard.jsx
+│       │   ├── DepositCard.jsx
+│       │   ├── WithdrawalForm.jsx
+│       │   └── TransactionItem.jsx
+│       │
+│       ├── pages/
+│       │   ├── Login.jsx
+│       │   ├── Register.jsx
+│       │   ├── Home.jsx
+│       │   ├── Tasks.jsx
+│       │   ├── Team.jsx
+│       │   ├── VIP.jsx
+│       │   ├── Profile.jsx
+│       │   ├── Deposit.jsx
+│       │   ├── Withdrawal.jsx
+│       │   ├── Records.jsx
+│       │   ├── ChangePassword.jsx
+│       │   └── Languages.jsx
+│       │
+│       ├── i18n/
+│       │   ├── index.js
+│       │   ├── tr.json
+│       │   ├── en.json
+│       │   ├── ru.json
+│       │   ├── de.json
+│       │   ├── fr.json
+│       │   ├── es.json
+│       │   └── ... 
+│       │
+│       └── styles/
+│           ├── global.css
+│           ├── auth.css
+│           ├── home.css
+│           ├── vip.css
+│           ├── tasks.css
+│           ├── deposit.css
+│           └── profile.css
+│
+├── database/
+│   ├── migrations/
+│   └── seed.py
+│
+├── tests/
+│   ├── test_auth.py
+│   ├── test_vip.py
+│   ├── test_referrals.py
+│   ├── test_tasks.py
+│   ├── test_deposits.py
+│   └── test_withdrawals.py
+│
+└── scripts/
+    ├── create_admin.py
+    └── seed_vips.pyTRON_DEPOSIT_ADDRESS = "TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC"
+
+EVM_DEPOSIT_ADDRESS = (
+    "0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc"
+)VIP_LEVELS = [
+    (1, 10.00),
+    (2, 40.00),
+    (3, 100.00),
+    (4, 250.00),
+    (5, 740.00),
+    (6, 1050.00),
+    (7, 4200.00),
+    (8, 9800.00),
+    (9, 20000.00),
+    (10, 45000.00),
+]
