@@ -123,3 +123,314 @@ Görev Takım  VIP  Ben  Mevduat
             TXID
               ↓
           Kayıtlar
+import secrets
+import string
+
+
+def generate_referral_code(length=8):
+    chars = string.ascii_uppercase + string.digits
+    return "CV-" + "".join(
+        secrets.choice(chars)
+        for _ in range(length)
+    )
+
+
+def build_referral_link(code):
+    return f"https://t.me/YOUR_BOT_USERNAME?start=ref_{code}"from dataclasses import dataclass
+from datetime import datetime
+from typing import Optional
+
+
+@dataclass
+class User:
+    id: int
+    telegram_id: int
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    password_hash: str = ""
+    vip: int = 0
+    referral_code: str = ""
+    referred_by: Optional[int] = None
+    remember_me: bool = False
+    language: str = "tr"
+    created_at: datetime = datetime.utcnow()
+
+
+@dataclass
+class LedgerEntry:
+    user_id: int
+    amount: float
+    entry_type: str
+    network: Optional[str]
+    txid: Optional[str]
+    created_at: datetime
+
+
+@dataclass
+class Withdrawal:
+    id: int
+    user_id: int
+    network: str
+    address: str
+    amount: float
+    status: str
+    txid: Optional[str]
+    created_at: datetimeimport re
+import bcrypt
+
+
+SPECIAL_CHARS = r",-&\-\^#>\(@\[\]<×"
+
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(
+        password.encode(),
+        bcrypt.gensalt()
+    ).decode()
+
+
+def verify_password(password: str, password_hash: str) -> bool:
+    return bcrypt.checkpw(
+        password.encode(),
+        password_hash.encode()
+    )
+
+
+def password_indicators(password: str):
+    """
+    Üç küçük gösterge:
+    harf -> kırmızı
+    özel karakter -> sarı
+    rakam -> yeşil
+    """
+
+    has_letter = bool(re.search(r"[A-Za-zА-Яа-я]", password))
+    has_number = bool(re.search(r"\d", password))
+    has_special = bool(re.search(r"[,\\-&\\-\\^#>\\(@\\[\\]<×]", password))
+
+    return {
+        "letter": "red" if has_letter else "off",
+        "special": "yellow" if has_special else "off",
+        "number": "green" if has_number else "off"
+    }async def send_reward_approval(bot, admin_chat_id, user, reward):
+    text = (
+        "🔔 GÜNLÜK ÖDÜL ONAYI\n\n"
+        f"Kullanıcı: {user.email or user.phone}\n"
+        f"VIP: VIP{user.vip}\n"
+        f"Ödül: {reward:.2f} USDT\n\n"
+        "Durum: Onay bekliyor"
+    )
+
+    await bot.send_message(
+        admin_chat_id,
+        text,
+        reply_markup=approval_keyboard(user.id)
+    )
+
+
+def approval_keyboard(user_id):
+    # Gerçek projede InlineKeyboardMarkup kullanılacak.
+    return {
+        "approve": f"reward_approve:{user_id}",
+        "reject": f"reward_reject:{user_id}"
+    }from config import VIP_LEVELS
+
+
+def can_unlock_vip(current_vip, target_vip, deposit_balance):
+    if target_vip not in VIP_LEVELS:
+        return False
+
+    if target_vip <= current_vip:
+        return False
+
+    required = VIP_LEVELS[target_vip]["deposit"]
+
+    return deposit_balance >= required
+
+
+def unlock_message(target_vip):
+    required = VIP_LEVELS[target_vip]["deposit"]
+
+    return (
+        "Mevduat bakiyenizle otomatik olarak kilidi açın.\n\n"
+        f"Depozito gerekli: ${required:,.2f}\n\n"
+        "Onaylamak"
+    )from datetime import datetime, time
+from config import (
+    TASK_START_HOUR,
+    TASK_START_MINUTE,
+    TASK_END_HOUR,
+    TASK_END_MINUTE,
+    DEMO_TASK_REWARD
+)
+
+
+def task_window_open(now=None):
+    now = now or datetime.now()
+
+    start = time(TASK_START_HOUR, TASK_START_MINUTE)
+    end = time(TASK_END_HOUR, TASK_END_MINUTE)
+
+    return start <= now.time() <= end
+
+
+def create_daily_task(user):
+    if user.vip == 0:
+        return None
+
+    return {
+        "user_id": user.id,
+        "title": "Bugünkü görev",
+        "reward": DEMO_TASK_REWARD,
+        "status": "pending",
+        "created_at": datetime.now()
+    }
+
+
+def claim_task(task):
+    if task["status"] != "pending":
+        raise ValueError("Bu görev daha önce alınmış.")
+
+    if not task_window_open():
+        raise ValueError(
+            "Görev yalnızca 18:00 - 18:10 arasında kullanılabilir."
+        )
+
+    task["status"] = "completed"
+
+    return task["reward"]from aiogram import Bot, Dispatcher, F
+from aiogram.types import Message
+from aiogram.filters import CommandStart
+import asyncio
+
+from config import APP_NAME
+
+
+BOT_TOKEN = "PUT_BOT_TOKEN_IN_ENV"
+
+bot = Bot(BOT_TOKEN)
+dp = Dispatcher()
+
+
+@dp.message(CommandStart())
+async def start(message: Message):
+    await message.answer(
+        f"🔐 {APP_NAME}\n\n"
+        "Hoş geldiniz.\n\n"
+        "Giriş yapmak veya kayıt olmak için aşağıdaki seçeneklerden "
+        "birini kullanın."
+    )
+
+
+@dp.message(F.text == "🏠 Ev")
+async def home(message: Message):
+    await message.answer(
+        "🏠 Ev\n\n"
+        "Toplam Bakiye: 0,00 USDT\n"
+        "Mevduat: 0,00 USDT\n"
+        "Kullanılabilir Bakiye: 0,00 USDT\n"
+        "VIP 0\n\n"
+        "Bugünkü görevler: 0\n"
+        "Bugün tamamlanması gereken görevler: 0"
+    )
+
+
+async def main():
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())from security import verify_password
+
+
+def validate_withdrawal(
+    password,
+    password_hash,
+    balance,
+    amount,
+    network,
+    address,
+    supported_networks
+):
+    if not verify_password(password, password_hash):
+        raise ValueError("Şifre yanlış. İşlem gerçekleştirilemedi.")
+
+    if amount <= 0:
+        raise ValueError("Geçersiz miktar.")
+
+    if amount > balance:
+        raise ValueError("Yetersiz bakiye.")
+
+    if network not in supported_networks:
+        raise ValueError("Desteklenmeyen ağ.")
+
+    if not address:
+        raise ValueError("Para çekme adresi gerekli.")
+
+    return Truefrom apscheduler.schedulers.asyncio import AsyncIOScheduler
+
+
+def start_scheduler(bot, admin_chat_id, get_active_users):
+    scheduler = AsyncIOScheduler()
+
+    async def daily_job():
+        users = await get_active_users()
+
+        for user in users:
+            if user.vip > 0:
+                # Ödül talebini oluştur.
+                # Gerçek finansal getiri hesabı yapılmaz.
+                await create_pending_reward(user)
+
+                await send_admin_notification(
+                    bot,
+                    admin_chat_id,
+                    user
+                )
+
+    scheduler.add_job(
+        daily_job,
+        "cron",
+        hour=18,
+        minute=0
+    )
+
+    scheduler.start()
+
+
+async def create_pending_reward(user):
+    pass
+
+
+async def send_admin_notification(bot, admin_chat_id, user):
+    text = (
+        "🔔 Yeni görev ödülü onay bekliyor\n\n"
+        f"Kullanıcı: {user.email or user.phone}\n"
+        f"VIP: VIP{user.vip}\n"
+        "Ödül: 2,50 USDT\n\n"
+        "18:00 - 18:10"
+    )
+
+    await bot.send_message(
+        admin_chat_id,
+        text
+    )aiogram
+bcrypt
+APScheduler
+SQLAlchemy
+alembic
+python-dotenv
+qrcode
+web3
+tronpyBOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+ADMIN_CHAT_ID=YOUR_ADMIN_CHAT_ID
+
+DATABASE_URL=YOUR_DATABASE_URL
+
+# PRIVATE KEYS MUST NOT BE COMMITTED TO GITHUB.
+# Use a secure wallet/custody/signing service for real transactions.
+BLOCKCHAIN_SIGNING_KEY=EVM / BEP20:
+0x009aC0194FAa46Aba93699cb41df8CcB6c145Ebc
+
+TRON / TRC20:
+TBbEQ7Gjc8JVyv5D1KYB6JPLsEM3sy4uuC
